@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "compromise": "^14.14.4",
+    "compromise-dates": "^3.7.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}
