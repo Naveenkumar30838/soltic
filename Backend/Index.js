@@ -16,19 +16,24 @@ app.use(cors({
   credentials:true
 }));
 
-app.get('/backend/message' , (req , res)=>{
+app.get('/chat/message' , (req , res)=>{
   console.log("Received Request ")
   const message  = req.params.message;
   const reply  = `Response for your requested Message (${message}) = Hi I'm Backend`
   res.send(reply);
 })
 
+function getResponse(message){
+  return "response for your Message "+message;
+}
+
 app.post('/c/:id' ,(req , res , next)=>{
   const {message} = req.body;
-  console.log("Received Message : " , message)
-  
-  res.json({"key1": `Response for your sent message : ${message+" " + Math.random(2,10 , 4)*10}`})
+  const response= getResponse(message)
+  console.log("Message : " , message)
+  res.json({message: message , response:response})
 })
+
 app.get('/', (req, res) => {
   res.send("Home Page");
 });
