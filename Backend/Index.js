@@ -1,12 +1,10 @@
-// server.js
-import express, { response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
-import { analyzeMessage } from "./utils/nlpProcessor.js";
-import { queryLLM } from "./utils/llmClient.js";
 import dotenv from 'dotenv'
+import { mainWithHistory } from "./apis.js";
 import cors from 'cors'
 
-dotenv.config() // Must to use credentials inside env file 
+dotenv.config()
 const app = express();
 
 app.use(bodyParser.json());
@@ -16,64 +14,70 @@ app.use(cors({
   credentials:true
 }));
 
-app.get('/chat/message' , (req , res)=>{
-  console.log("Received Request ")
-  const message  = req.params.message;
-  const reply  = `Response for your requested Message (${message}) = Hi I'm Backend`
-  res.send(reply);
-})
+// Store conversation histories in memory (use database in production)
+const chatHistories = new Map();
 
-function getResponse(message){
-  return "response for your Message "+message;
-}
+app.post('/c/:id', async (req, res) => {
+  const { message } = req.body;
+  const chatId = req.params.id;
+  
+  console.log("Message:", message);
+  console.log("Chat ID:", chatId);
+  
+  try {
+    // Get or create chat history for this conversation
+    if (!chatHistories.has(chatId)) {
+      chatHistories.set(chatId, []);
+    }
+    
+    const history = chatHistories.get(chatId);
+    
+    // Get response with conversation history
+    const response = await mainWithHistory(message+"Show a Markdown Response Aligned on the Left", history);
+    
+    // Add user message and AI response to history
+    history.push({
+      role: "user",
+      parts: [{ text: message }]
+    });
+    history.push({
+      role: "model",
+      parts: [{ text: response }]
+    });
+    
+    // Update the stored history
+    chatHistories.set(chatId, history);
+    
+    setTimeout(() => {
+      res.json({ message: message, response: response });
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ 
+      message: message, 
+      response: "Error: Failed to generate response" 
+    });
+  }
+});
 
-app.post('/c/:id' ,(req , res , next)=>{
-  const {message} = req.body;
-  const response= getResponse(message)
-  console.log("Message : " , message)
-  res.json({message: message , response:response})
-})
+// Optional: Clear chat history endpoint
+app.delete('/c/:id', (req, res) => {
+  const chatId = req.params.id;
+  chatHistories.delete(chatId);
+  res.json({ success: true, message: "Chat history cleared" });
+});
+
+// Optional: Get all chat IDs
+app.get('/chats', (req, res) => {
+  const chatIds = Array.from(chatHistories.keys());
+  res.json({ chats: chatIds });
+});
 
 app.get('/', (req, res) => {
   res.send("Home Page");
 });
 
-// // Chat endpoint
-// app.post("/chat", async (req, res) => {
-//   try {
-//     const { message, userProfile } = req.body;
-//     if (!message) return res.status(400).json({ error: "Message is required" });
-
-//     // Step 1: NLP preprocessing
-//     const nlpData = analyzeMessage(message);
-
-//     // Step 2: Build LLM prompt
-//     const prompt = `
-// You are a travel assistant chatbot.
-// Your task is to help users with trip planning, travel suggestions, and bookings.
-// Use the extracted data below to provide helpful, human-like replies.
-
-// User profile: ${JSON.stringify(userProfile || {}, null, 2)}
-// User message: "${nlpData.cleanedMessage}"
-// Intent: ${nlpData.intent}
-// Entities: ${JSON.stringify(nlpData.entities)}
-
-// Provide a concise, useful response. Be polite, conversational, and specific.
-//     `;
-
-//     // Step 3: Query LLaMA via Ollama
-//     const llmResponse = await queryLLM(prompt);
-
-//     // Step 4: Send back structured response
-//     res.json({
-//       intent: nlpData.intent,
-//       entities: nlpData.entities,
-//       response: llmResponse.trim()
-//     });
-//   } catch (err) {
-//     console.error("Error:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-console.log(process.env.Port)
-app.listen(process.env.port || 5000, () => console.log(`Server running at Port ${process.env.Port}`));
+app.listen(process.env.PORT || 5000, () => 
+  console.log(`Server running at Port ${process.env.PORT || 5000}`)
+);

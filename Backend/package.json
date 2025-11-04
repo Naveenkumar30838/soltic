@@ -1,6 +1,8 @@
 {
   "type": "module",
   "dependencies": {
+    "@google/genai": "^1.28.0",
+    "@google/generative-ai": "^0.24.1",
     "body-parser": "^2.2.0",
     "compromise": "^14.14.4",
     "compromise-dates": "^3.7.1",
