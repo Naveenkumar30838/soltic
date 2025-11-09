@@ -19,6 +19,7 @@
 
 // apis.js
 import dotenv from 'dotenv'
+import { TRAVEL_AGENT_SYSTEM_PROMPT } from './config/geminiConfig.js';
 dotenv.config()
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -27,9 +28,14 @@ const gemini_api_key = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenerativeAI(gemini_api_key);
 
 export async function mainWithHistory(message, history = []) {
+
     try {
         const model = ai.getGenerativeModel({ 
-            model: "gemini-2.0-flash-exp"
+            model: "gemini-2.0-flash-exp",
+             systemInstruction: {
+                role: "system",
+                parts: [{ text: TRAVEL_AGENT_SYSTEM_PROMPT }],
+            },
         });
         
         // Start a chat session with history
@@ -43,6 +49,7 @@ export async function mainWithHistory(message, history = []) {
         // Send the new message
         const result = await chat.sendMessage(message);
         const text  = result.response.text();
+        console.log("Generated text is : " , text);
         return text;
         
     } catch (error) {

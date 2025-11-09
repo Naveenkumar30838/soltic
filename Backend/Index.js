@@ -3,6 +3,9 @@ import bodyParser from "body-parser";
 import dotenv from 'dotenv'
 import { mainWithHistory } from "./apis.js";
 import cors from 'cors'
+import Chats from "./Model/chatModel.js";
+import connectMongo from "./config/db.js";
+// import {  FEW_SHOT_EXAMPLES } from "./config/geminiConfig.js";
 
 dotenv.config()
 const app = express();
@@ -14,8 +17,8 @@ app.use(cors({
   credentials:true
 }));
 
-// Store conversation histories in memory (use database in production)
-const chatHistories = new Map();
+// Data base Connection  
+connectMongo()
 
 app.post('/c/:id', async (req, res) => {
   const { message } = req.body;
@@ -25,28 +28,31 @@ app.post('/c/:id', async (req, res) => {
   console.log("Chat ID:", chatId);
   
   try {
-    // Get or create chat history for this conversation
-    if (!chatHistories.has(chatId)) {
-      chatHistories.set(chatId, []);
+    let chats = await Chats.findOne({id:chatId})
+    if(!chats){
+      const userId ="123"
+      chats = await Chats.create({
+        id:chatId,
+        userId,
+        chat:[]
+      })
     }
-    
-    const history = chatHistories.get(chatId);
-    
+    // Get or create chat history for this conversation    
+    const history = chats.chat;
+    console.log("History is : ");
+    console.log(history);
     // Get response with conversation history
-    const response = await mainWithHistory(message+"Show a Markdown Response Aligned on the Left", history);
+    const response = await mainWithHistory(message, history);
     
     // Add user message and AI response to history
     history.push({
-      role: "user",
-      parts: [{ text: message }]
-    });
-    history.push({
-      role: "model",
-      parts: [{ text: response }]
+      message:message,
+      response:response
     });
     
     // Update the stored history
-    chatHistories.set(chatId, history);
+    chats.chat=history;
+    await chats.save();// Saving the chats array back to mongodb
     
     setTimeout(() => {
       res.json({ message: message, response: response });
