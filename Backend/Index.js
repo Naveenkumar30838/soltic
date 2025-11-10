@@ -1,16 +1,20 @@
 import express from "express";
+import session from 'express-session'
+import MongoStore from "connect-mongo";
 import bodyParser from "body-parser";
 import dotenv from 'dotenv'
 import { mainWithHistory } from "./apis.js";
 import cors from 'cors'
 import Chats from "./Model/chatModel.js";
 import connectMongo from "./config/db.js";
+import session from "express-session";
 // import {  FEW_SHOT_EXAMPLES } from "./config/geminiConfig.js";
 
 dotenv.config()
 const app = express();
 
 app.use(bodyParser.json());
+app.use(express.json());
 
 app.use(cors({
   origin:'http://localhost:5173',
@@ -19,7 +23,9 @@ app.use(cors({
 
 // Data base Connection  
 connectMongo()
+app.use(session({
 
+}) )
 app.post('/c/:id', async (req, res) => {
   const { message } = req.body;
   const chatId = req.params.id;

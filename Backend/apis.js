@@ -29,6 +29,11 @@ const ai = new GoogleGenerativeAI(gemini_api_key);
 
 export async function mainWithHistory(message, history = []) {
 
+    const formattedHistory = history.flatMap(item => [
+    { role: "user", parts: [{ text: item.message }] },
+    { role: "model", parts: [{ text: item.response }] }
+  ]);
+
     try {
         const model = ai.getGenerativeModel({ 
             model: "gemini-2.0-flash-exp",
@@ -40,7 +45,7 @@ export async function mainWithHistory(message, history = []) {
         
         // Start a chat session with history
         const chat = model.startChat({
-            history: history, // Pass previous conversation
+            history: formattedHistory, // Pass previous conversation
             generationConfig: {
                 maxOutputTokens: 1000,
             },
@@ -49,7 +54,6 @@ export async function mainWithHistory(message, history = []) {
         // Send the new message
         const result = await chat.sendMessage(message);
         const text  = result.response.text();
-        console.log("Generated text is : " , text);
         return text;
         
     } catch (error) {
