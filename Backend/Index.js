@@ -6,8 +6,8 @@ import dotenv from 'dotenv'
 import { mainWithHistory } from "./apis.js";
 import cors from 'cors'
 import Chats from "./Model/chatModel.js";
-import connectMongo from "./config/db.js";
-import session from "express-session";
+import {connectMongo , conn} from "./config/db.js";
+import authRoutes from './Routes/authRoutes.js'
 // import {  FEW_SHOT_EXAMPLES } from "./config/geminiConfig.js";
 
 dotenv.config()
@@ -23,9 +23,19 @@ app.use(cors({
 
 // Data base Connection  
 connectMongo()
-app.use(session({
 
-}) )
+
+app.use(
+  session({
+    secret: process.env.MONGO_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true },
+  })
+);
+
+// Routes :
+app.use("/" , authRoutes);
 app.post('/c/:id', async (req, res) => {
   const { message } = req.body;
   const chatId = req.params.id;
