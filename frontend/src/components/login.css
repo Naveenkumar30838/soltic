@@ -89,6 +89,9 @@
 .signup-link a:hover {
   text-decoration: underline;
 }
+.error-text{
+  color: red!important;
+}
 
 /* Responsive */
 @media (max-width: 480px) {

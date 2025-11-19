@@ -6,6 +6,8 @@ import "./signup.css";
 const Signup = () => {
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -13,7 +15,10 @@ const Signup = () => {
     age: "",
     email: "",
     mob: "",
+    password: "",
     joiningDate: new Date().toISOString().split("T")[0],
+    profession: "",     // ✅ Added
+    bio: "",            // ✅ Added
   });
 
   const [loading, setLoading] = useState(false);
@@ -30,14 +35,15 @@ const Signup = () => {
     setErrorMsg("");
 
     try {
-      // Send signup request to backend
-      const response = await axios.post("http://localhost:5000/signup", formData, {
-        withCredentials: true, // for session cookies
-      });
+      const response = await axios.post(
+        `${BASE_URL}/signup`,
+        formData,
+        { withCredentials: true }
+      );
 
-      // ✅ Check backend response
       if (response.data?.status === "signup_success") {
-        navigate("/chat");
+        const res = axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
+        return navigate(`/chat/${res.data.chatId}`);
       } else {
         setErrorMsg(response.data?.message || "Signup failed. Please try again.");
       }
@@ -78,6 +84,19 @@ const Signup = () => {
             name="username"
             placeholder="Choose a username"
             value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter a password"
+            value={formData.password}
             onChange={handleChange}
             required
           />
@@ -145,6 +164,32 @@ const Signup = () => {
             onChange={handleChange}
             required
           />
+        </div>
+
+        {/* ✅ NEW SECTION — PROFESSION */}
+        <div className="input-group">
+          <label htmlFor="profession">Profession</label>
+          <input
+            type="text"
+            id="profession"
+            name="profession"
+            placeholder="Your profession"
+            value={formData.profession}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* ✅ NEW SECTION — BIO */}
+        <div className="input-group">
+          <label htmlFor="bio">Bio</label>
+          <textarea
+            id="bio"
+            name="bio"
+            placeholder="Write something about yourself"
+            value={formData.bio}
+            onChange={handleChange}
+            rows={3}
+          ></textarea>
         </div>
 
         <button type="submit" className="signup-btn" disabled={loading}>

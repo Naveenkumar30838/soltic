@@ -36,7 +36,8 @@ export async function mainWithHistory(message, history = []) {
 
     try {
         const model = ai.getGenerativeModel({ 
-            model: "gemini-2.0-flash-exp",
+            // model: "gemini-2.0-flash-exp",
+            model:"gemini-2.0-flash",
              systemInstruction: {
                 role: "system",
                 parts: [{ text: TRAVEL_AGENT_SYSTEM_PROMPT }],

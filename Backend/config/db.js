@@ -10,6 +10,7 @@ const connectMongo= async ()=>{
         console.log("Mongo Db Connected Successfully ")
     }catch(error){
         console.log("Mongo DB connection Failed");
+        console.log("Error is : " ,error)
         process.exit(1);
     }
 }
@@ -86,5 +87,6 @@ const conn = await mysql.createConnection({
   database: process.env.SQL_DATABASE,
   multipleStatements: true,
 });
+
 console.log("My Sql Connected Successfully")
 export  {connectMongo , conn};

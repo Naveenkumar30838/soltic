@@ -1,121 +1,213 @@
+/* CONTAINER                     */
 .profile-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-  font-family: "Poppins", sans-serif;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color: #222;
 }
-
-/* Profile Info Card */
-.profile-card {
-  background: #fff;
-  padding: 25px 35px;
-  border-radius: 12px;
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 600px;
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.profile-card h2 {
+/* HEADINGS                      */
+.profile-container h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
   color: #333;
-  margin-bottom: 5px;
+  border-left: 5px solid #0077ff;
+  padding-left: 10px;
 }
-
-.profile-card p {
-  color: #777;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.profile-details {
-  margin-top: 15px;
-  text-align: left;
-  line-height: 1.8;
+/* PROFILE BOX                   */
+.profile-box {
+  background: #f4f7fb;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
 .profile-details p {
-  color: #444;
+  margin: 5px 0;
+  font-size: 15px;
+}
+
+/* ===== HEADER BAR ===== */
+.profile-header {
+  width: 100%;
+  padding: 15px 20px;
+  background: #1d3557;
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-title {
+  color: white!important;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.profile-header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
-/* Trips Section */
-.trips-section {
-  width: 90%;
-  max-width: 900px;
+.btn-new-chat {
+  background: #457b9d;
+  color: white;
+}
+.btn-new-chat:hover {
+  background: #356d89;
 }
 
-.trips-section h3 {
-  color: #333;
+.btn-delete {
+  background: #e63946;
+  color: white;
+}
+.btn-delete:hover {
+  background: #c72936;
+}
+
+.btn-logout {
+  background: #a8dadc;
+  color: #1d3557;
+}
+.btn-add-trip{
+    background: green;
+  color: white;
+}
+.btn-logout:hover {
+  background: #8ec5c7;
+}
+
+/* ===== PROFILE BOX IMPROVED ===== */
+.profile-box {
+  background: rgb(239, 238, 238);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.section-heading {
   margin-bottom: 15px;
-  margin-top: 30px;
-  border-left: 4px solid #3b82f6;
-  padding-left: 8px;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-.trip-list {
+.profile-details-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* TRIP SECTIONS                 */
+.trip-section {
+  background: #f4f7fb;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
 .trip-card {
   background: #fff;
+  border-left: 4px solid #4CAF50;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.trip-card p {
+  margin: 3px 0;
+}
+/* CHAT HISTORY                  */
+.chat-section {
+  background: #f4f7fb;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  margin-bottom: 30px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-.trip-card:hover {
-  transform: translateY(-3px);
+.chat-card {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #fff;
+  border-left: 4px solid #0077ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.trip-card.upcoming {
-  border-left: 5px solid #34d399;
+.chat-link {
+  color: #0056d6;
+  font-weight: bold;
+  text-decoration: none;
 }
 
-.trip-card.past {
-  border-left: 5px solid #60a5fa;
+.chat-link:hover {
+  text-decoration: underline;
+}
+/* Scrollable list */
+.chat-list-scroll {
+  max-height: 350px;      /* FIXED HEIGHT */
+  overflow-y: auto;       /* Scroll inside the box */
+  padding-right: 10px;
 }
 
-.trip-info h4 {
-  color: #333;
-  margin-bottom: 6px;
+/* Chat card layout */
+.chat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.trip-info p {
-  color: #555;
-  margin: 3px 0;
-  font-size: 14px;
+/* Delete button */
+.delete-chat-btn {
+  background-color: #ff4d4d;
+  border: none;
+  padding: 6px 10px;
+  color: white;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.trip-rating {
-  margin-top: 10px;
-  color: #fbbf24;
-  font-weight: 600;
+.delete-chat-btn:hover {
+  background-color: #d93636;
 }
 
-.no-trips {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 10px;
+/* LOADING TEXT                  */
+.loading {
+  text-align: center;
+  font-size: 20px;
+  padding: 40px;
+  color: #444;
 }
-
-/* Responsive */
+/* RESPONSIVE DESIGN             */
 @media (max-width: 600px) {
-  .profile-card {
-    padding: 20px;
-  }
-
-  .trip-card {
+  .profile-container {
     padding: 15px;
   }
 
-  .trips-section h3 {
-    font-size: 18px;
+  .trip-card,
+  .profile-box,
+  .trip-section,
+  .chat-section {
+    padding: 15px;
   }
 }

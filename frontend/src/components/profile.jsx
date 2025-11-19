@@ -1,77 +1,224 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import "./profile.css";
+import axios from "axios";
 
-const Profile = ({ profile, trips }) => {
-  const today = new Date();
+const Profile = () => {
+  const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const { username } = useParams();
 
-  // Separate trips into upcoming and past
-  const pastTrips = trips.filter(
-    (trip) => new Date(trip.ENDDATE) < today
-  );
-  const upcomingTrips = trips.filter(
-    (trip) => new Date(trip.STARTDATE) >= today
-  );
+  // ================================ 
+  // STATES
+  // ================================
+  const [profile, setProfile] = useState(null);
+  const [upcomingTrips, setUpcomingTrips] = useState([]);
+  const [pastTrips, setPastTrips] = useState([]);
+  const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ================================
+  // AUTH CHECK (USE YOUR CODE)
+  // ================================
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/auth/`, {
+          withCredentials: true,
+        });
+
+        if (!res.data || res.data.authenticated !== true) {
+          return navigate("/login");
+        }
+      } catch (err) {
+        return navigate("/login");
+      }
+    };
+
+    verifySession();
+  }, []);
+
+useEffect(() => {
+  const loadProfileData = async () => {
+    try {
+
+      const p = await axios.get(`${BASE_URL}/profile/${username}`);
+      const t = await axios.get(`${BASE_URL}/profile/${username}/trips`);
+      const c = await axios.get(`${BASE_URL}/chats/${username}`);
+      if (
+        p.data?.status === "not_logged_in" ||
+        t.data?.status === "not_logged_in" ||
+        c.data?.status === "not_logged_in"
+      ) {
+        return navigate("/login");
+      }
+
+      setProfile(p.data.data);
+      setUpcomingTrips(t.data.upcoming || []);
+      setPastTrips(t.data.past || []);
+      setChats(c.data.chats || []);
+
+      setLoading(false);
+    } catch (error) {
+
+      console.error("Error loading profile:", error);
+      setLoading(false);
+    }
+  };
+
+  loadProfileData();
+}, [username]);
+
+const handleDeleteChat = async (chatId) => {
+  if (!window.confirm("Are you sure you want to delete this chat?")) return;
+
+  try {
+    await axios.delete(`${BASE_URL}/c/${chatId}`, { withCredentials: true });
+    // Remove deleted chat from UI instantly
+    setChats((prev) => prev.filter((ch) => ch.id !== chatId));
+  } catch (err) {
+    console.error("Chat delete error:", err);
+    alert("Failed to delete chat.");
+  }
+};
+
+ const handleNewChat = async () => {
+    try {
+      const res = await axios.post(`${BASE_URL}/chat/create`, { withCredentials:true });
+      if (res.data) {
+        navigate(`/chat/${res.data.chatId}`);
+      }
+    } catch (err) {
+      console.error("Error creating new chat:", err);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!window.confirm("Are you sure you want to delete this Profile?")) return;
+    const res = await axios.delete(`${BASE_URL}/profile/${username}`);
+    if(!res.status =="success"){
+      window.alert("Profile Delete Failed");
+      return;
+    }
+    navigate(`/signup`);
+  };
+
+  const handleLogout = async () => {
+    const res = await axios.post(`${BASE_URL}/logout`)
+    navigate("/login");
+  };
+
+
+  if (loading) return <div className="loading">Loading Profile...</div>;
 
   return (
     <div className="profile-container">
-      <div className="profile-card">
-        <h2>{profile.NAME}</h2>
-        <p>@{profile.USERNAME}</p>
-        <div className="profile-details">
-          <p><strong>Country:</strong> {profile.COUNTRY || "—"}</p>
-          <p><strong>Age:</strong> {profile.AGE || "—"}</p>
-          <p><strong>Email:</strong> {profile.EMAIL}</p>
-          <p><strong>Mobile:</strong> {profile.MOB}</p>
-          <p><strong>Joined On:</strong> {profile.JOININGDATE}</p>
+
+      <div className="profile-header">
+        <h2 className="profile-title">{username}</h2>
+
+        <div className="profile-header-buttons">
+          <button className="btn btn-new-chat" onClick={handleNewChat}>
+            New Chat
+          </button>
+          <button className="btn btn-add-trip" onClick={() => navigate("/addTrip")}>
+            Add Trip
+          </button>
+
+          <button className="btn btn-delete" onClick={handleDeleteProfile}>
+            Delete Profile
+          </button>
+
+          <button className="btn btn-logout" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </div>
+      {/* USER PROFILE BOX */}
+      <div className="profile-box">
+        <h2>Profile Information</h2>
 
-      <div className="trips-section">
-        <h3>Upcoming Trips</h3>
-        {upcomingTrips.length > 0 ? (
-          <div className="trip-list">
-            {upcomingTrips.map((trip) => (
-              <div key={trip.ID} className="trip-card upcoming">
-                <div className="trip-info">
-                  <h4>{trip.STARTLOC} → {trip.ENDLOC}</h4>
-                  <p>
-                    {trip.STARTDATE} — {trip.ENDDATE}
-                  </p>
-                  <p><strong>Rooms:</strong> {trip.ROOMSCOUNT}</p>
-                  <p><strong>Travellers:</strong> {trip.TRAVELLERSCOUNT}</p>
-                  <p><strong>Cost:</strong> ₹{trip.COST}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="no-trips">No upcoming trips</p>
-        )}
-
-        <h3>Past Trips</h3>
-        {pastTrips.length > 0 ? (
-          <div className="trip-list">
-            {pastTrips.map((trip) => (
-              <div key={trip.ID} className="trip-card past">
-                <div className="trip-info">
-                  <h4>{trip.STARTLOC} → {trip.ENDLOC}</h4>
-                  <p>{trip.STARTDATE} — {trip.ENDDATE}</p>
-                  <p><strong>Rooms:</strong> {trip.ROOMSCOUNT}</p>
-                  <p><strong>Travellers:</strong> {trip.TRAVELLERSCOUNT}</p>
-                  <p><strong>Cost:</strong> ₹{trip.COST}</p>
-                </div>
-                {trip.RATING && (
-                  <div className="trip-rating">
-                    <span>⭐ {trip.RATING}/5</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="no-trips">No past trips</p>
+        {profile ? (
+          <div className="profile-details-grid">
+        <p><b>Name:</b> {profile.NAME}</p>
+        <p><b>Username:</b> {profile.USERNAME}</p>
+        <p><b>Country:</b> {profile.COUNTRY}</p>
+        <p><b>Age:</b> {profile.AGE}</p>
+        <p><b>Email:</b> {profile.EMAIL}</p>
+        <p><b>Mobile:</b> {profile.MOB}</p>
+        <p><b>Profession:</b> {profile.PROFESSIONN}</p>
+        <p><b>Bio:</b> {profile.BIO}</p>
+      </div>
+      ) : (
+        <p>No profile found.</p>
         )}
       </div>
+
+      {/* UPCOMING TRIPS */}
+      <div className="trip-section">
+        <h2>Upcoming Trips</h2>
+
+        {upcomingTrips.length === 0 ? (
+          <p>No upcoming trips.</p>
+        ) : (
+          upcomingTrips.map((trip) => (
+            <div key={trip.ID} className="trip-card">
+              <p><b>From:</b> {trip.STARTLOC}</p>
+              <p><b>To:</b> {trip.ENDLOC}</p>
+              <p><b>Start:</b> {trip.STARTDATE}</p>
+              <p><b>End:</b> {trip.ENDDATE}</p>
+              <p><b>Cost:</b> {trip.COST}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* PAST TRIPS */}
+      <div className="trip-section">
+        <h2>Past Trips</h2>
+
+        {pastTrips.length === 0 ? (
+          <p>No past trips.</p>
+        ) : (
+          pastTrips.map((trip) => (
+            <div key={trip.ID} className="trip-card">
+              <p><b>From:</b> {trip.STARTLOC}</p>
+              <p><b>To:</b> {trip.ENDLOC}</p>
+              <p><b>Start:</b> {trip.STARTDATE}</p>
+              <p><b>End:</b> {trip.ENDDATE}</p>
+              <p><b>Rating:</b> {trip.RATING}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="chat-section">
+        <h2>Chat History</h2>
+
+        {chats.length === 0 ? (
+          <p>No chats found.</p>
+        ) : (
+          <div className="chat-list-scroll">
+            {chats.map((ch) => (
+              <div key={ch.id} className="chat-card chat-item">
+
+                <Link to={`/chat/${ch.id}`} className="chat-link">
+                  {ch.id}
+                </Link>
+                <p> {ch.updatedAt}</p>
+                <button
+                  className="delete-chat-btn"
+                  onClick={() => handleDeleteChat(ch.id)}
+                >
+                  Delete
+                </button>
+
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };

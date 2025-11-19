@@ -7,7 +7,10 @@ import { mainWithHistory } from "./apis.js";
 import cors from 'cors'
 import Chats from "./Model/chatModel.js";
 import {connectMongo , conn} from "./config/db.js";
-import authRoutes from './Routes/authRoutes.js'
+import authRoutes from './Routes/authRoutes.js';
+import chatRoutes from './Routes/chatRoutes.js';
+import profileRoutes from './Routes/profileRoutes.js';
+import tripRoutes from './Routes/tripRoutes.js';
 // import {  FEW_SHOT_EXAMPLES } from "./config/geminiConfig.js";
 
 dotenv.config()
@@ -18,83 +21,36 @@ app.use(express.json());
 
 app.use(cors({
   origin:'http://localhost:5173',
-  credentials:true
+  credentials:true,
+  optionsSuccessStatus:200
 }));
 
 // Data base Connection  
-connectMongo()
+connectMongo();
 
 
 app.use(
   session({
-    secret: process.env.MONGO_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true },
+    secret: process.env.MONGO_SECRET,             
+    resave: false,                       
+    saveUninitialized: false,            
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,       // 1 day
+      httpOnly: true,
+      secure: false,                     // set true only in HTTPS
+    },
+    store: MongoStore.create({// Required for persistently storing connect-mongo models 
+      mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
+      ttl: 24 * 60 * 60,                 // store sessions for 1 day
+    }),
   })
 );
-
 // Routes :
 app.use("/" , authRoutes);
-app.post('/c/:id', async (req, res) => {
-  const { message } = req.body;
-  const chatId = req.params.id;
-  
-  console.log("Message:", message);
-  console.log("Chat ID:", chatId);
-  
-  try {
-    let chats = await Chats.findOne({id:chatId})
-    if(!chats){
-      const userId ="123"
-      chats = await Chats.create({
-        id:chatId,
-        userId,
-        chat:[]
-      })
-    }
-    // Get or create chat history for this conversation    
-    const history = chats.chat;
-    console.log("History is : ");
-    console.log(history);
-    // Get response with conversation history
-    const response = await mainWithHistory(message, history);
-    
-    // Add user message and AI response to history
-    history.push({
-      message:message,
-      response:response
-    });
-    
-    // Update the stored history
-    chats.chat=history;
-    await chats.save();// Saving the chats array back to mongodb
-    
-    setTimeout(() => {
-      res.json({ message: message, response: response });
-    }, 3000);
-    
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ 
-      message: message, 
-      response: "Error: Failed to generate response" 
-    });
-  }
-});
+app.use("/", profileRoutes);
+app.use("/" , chatRoutes);
+app.use("/" , tripRoutes);
 
-// Optional: Clear chat history endpoint
-app.delete('/c/:id', (req, res) => {
-  const chatId = req.params.id;
-  chatHistories.delete(chatId);
-  res.json({ success: true, message: "Chat history cleared" });
-});
-
-// Optional: Get all chat IDs
-app.get('/chats', (req, res) => {
-  const chatIds = Array.from(chatHistories.keys());
-  res.json({ chats: chatIds });
-});
 
 app.get('/', (req, res) => {
   res.send("Home Page");

@@ -1,8 +1,9 @@
 import { BrowserRouter as Router , Routes,Route , Navigate} from 'react-router-dom'
 import Chat from "./components/chat.jsx";
 import Login from "./components/login.jsx";
-import Signup from "./components/singup.jsx";
+import Signup from "./components/signup.jsx";
 import Profile from "./components/profile.jsx";
+import AddTrip from './components/addTrip.jsx';
 function App() {
   return(
     <Router>
@@ -10,8 +11,9 @@ function App() {
         <Route path='/' element={<Navigate to="/login" ></Navigate>}></Route>
         <Route path='/login' element={<Login></Login>}/>
         <Route path='/signup' element={<Signup></Signup>}/>
-        <Route path='/profile' element={<Profile></Profile>} />
-        <Route path='/chat' element={<Chat></Chat>}/>
+        <Route path='/profile/:username' element={<Profile></Profile>} />
+        <Route path='/chat/:chatId' element={<Chat></Chat>}/>
+        <Route path="/addTrip" element={<AddTrip />} />
       </Routes>
     </Router>
   )

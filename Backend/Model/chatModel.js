@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema({
     id:{type:String , required:true},
-    userId:{type:String , required:true},
+    username:{type:String , required:true},
     chat:[messageSchema]
 },{timestamps:true})
 

@@ -1,0 +1,79 @@
+/* ------- MAIN CONTAINER (unchanged layout) ------- */
+.add-trip-container {
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 500px;
+  margin: 40px auto;
+  background: rgb(225, 222, 241);
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* ------- FORM HEADER ------- */
+.add-trip-container h2 {
+  text-align: center;
+  color: #2b4f81;
+  margin-bottom: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ------- FORM INPUTS (colored + animated) ------- */
+.trip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.trip-form label {
+  font-weight: 600;
+  color: #34495e;
+}
+
+.trip-form input {
+  padding: 12px 14px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 2px solid #d4d9f2;
+  background: #f6f8ff;
+  transition: 0.25s ease;
+}
+
+/* Focus effect in color  */
+.trip-form input:focus {
+  background: #eef3ff;
+  border-color: #5573f3;
+  box-shadow: 0 0 6px rgba(85, 115, 243, 0.35);
+  outline: none;
+}
+
+/* ------- SUBMIT BUTTON ------- */
+.trip-form button,
+.add-trip-btn {
+  margin-top: 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #5573f3, #6b9bff);
+  transition: 0.3s ease;
+}
+
+/* Hover effect */
+.trip-form button:hover,
+.add-trip-btn:hover {
+  background: linear-gradient(135deg, #445fd9, #588bff);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(85, 115, 243, 0.35);
+}
+
+/* ------- RESPONSIVE ------- */
+@media (max-width: 480px) {
+  .add-trip-container {
+    padding: 20px;
+  }
+}

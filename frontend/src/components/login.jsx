@@ -5,6 +5,7 @@ import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL ;
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
@@ -17,17 +18,28 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/login", formData, {
-        withCredentials: true, // Important for session cookies
-      });
+      const response = await axios.post(
+        `${BASE_URL}/login`,
+        formData,
+        { withCredentials: true }
+      );
 
-      if (response.data.status === "success") {
-        navigate("/chat");
-      } else if (response.data.status === "already_logged_in") {
-        setError("User already logged in from another session.");
-      } else {
-        setError(response.data.message || "Invalid credentials");
+      const status = response.data.status;
+      console.log("Auth Route Status : " , status)
+      // Backend case 1: user not found → redirect to signup
+      if (status === "user_not_found") {
+        setError("No Such User Exists.Please SignUp")
       }
+
+      // Backend case 2: already logged in → redirect to chat
+      if (status === "already_logged_in" || status === "login_success") {
+        const res = await axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
+        console.log("Chat create route response " , res.data.chatId);
+        return navigate(`/chat/${res.data.chatId}`);
+      }
+
+      // Fallback error message
+      setError(response.data.message || "Invalid credentials");
     } catch (err) {
       console.error("Login error:", err);
       setError("Server error. Please try again later.");
