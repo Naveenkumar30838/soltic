@@ -171,11 +171,14 @@ SESSION_SECRET=your_secret
 
 ---
 
-## 🖼️ ** Chat Model Outcome**
+## 🖼️ **Chat Model Outcome**
 
 ---
-ChatBot Like Interface(for the Agent): 
+* ChatBot Like Interface(for the Agent): 
 <img width="959" height="446" alt="{8BBCD3EE-5AD5-4D99-A765-ECDAE94B93CD}" src="https://github.com/user-attachments/assets/fab66fa0-c553-4214-b7d2-c83fd8f58062" />
+
+* User Profile Page (User Details , ChatHistory , Upcoming , past Trips): 
+<img width="935" height="444" alt="{C517D034-24DA-4D01-B62A-17E20CE8A6F2}" src="https://github.com/user-attachments/assets/db42d814-df69-404b-976a-affc8392740d" />
 
 ## 🧪 **Testing**
 
