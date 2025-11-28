@@ -1,4 +1,4 @@
-<img width="312" height="149" alt="image" src="https://github.com/user-attachments/assets/9612069d-6c92-4dad-88e5-b4b73068cffa" /># **SOLTIC – AI-Powered Travel Assistant **
+# **SOLTIC – AI-Powered Travel Assistant **
 
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
