@@ -1,4 +1,4 @@
-### **SOLTIC – AI-Powered Travel Assistant **
+## **SOLTIC – AI-Powered Travel Assistant **
 
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
