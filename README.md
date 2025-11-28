@@ -1,4 +1,4 @@
-# **SOLTIC – AI-Powered Travel Assistant **
+<img width="312" height="149" alt="image" src="https://github.com/user-attachments/assets/9612069d-6c92-4dad-88e5-b4b73068cffa" /># **SOLTIC – AI-Powered Travel Assistant **
 
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -171,11 +171,11 @@ SESSION_SECRET=your_secret
 
 ---
 
-## 🖼️ **Screenshots (Optional — Tell me if You Want Them)**
-
-I can generate mock screenshots or layout previews for better documentation.
+## 🖼️ ** Chat Model Outcome**
 
 ---
+ChatBot Like Interface(for the Agent): 
+<img width="959" height="446" alt="{8BBCD3EE-5AD5-4D99-A765-ECDAE94B93CD}" src="https://github.com/user-attachments/assets/fab66fa0-c553-4214-b7d2-c83fd8f58062" />
 
 ## 🧪 **Testing**
 
