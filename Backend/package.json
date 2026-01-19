@@ -1,5 +1,8 @@
 {
   "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
   "dependencies": {
     "@google/genai": "^1.28.0",
     "@google/generative-ai": "^0.24.1",
@@ -13,6 +16,7 @@
     "express-session": "^1.18.2",
     "mongoose": "^8.19.3",
     "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.11",
     "uuidv4": "^6.2.13"
   }
 }

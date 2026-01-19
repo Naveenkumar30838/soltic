@@ -103,6 +103,29 @@ const handleDeleteChat = async (chatId) => {
     navigate(`/signup`);
   };
 
+  const handleDeleteTrip = async (tripId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this trip?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await axios.delete(`${BASE_URL}/trips/${tripId}`, {
+        withCredentials: true,
+      });
+
+      if (res.data.status === "success") {
+        // Remove the deleted trip from both lists
+        setUpcomingTrips((prev) => prev.filter((t) => t.ID !== tripId));
+        setPastTrips((prev) => prev.filter((t) => t.ID !== tripId));
+        alert("Trip deleted successfully!");
+      } else {
+        alert("Failed to delete trip.");
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("An error occurred while deleting the trip.");
+    }
+  };
+
   const handleLogout = async () => {
     const res = await axios.post(`${BASE_URL}/logout`)
     navigate("/login");
@@ -168,6 +191,20 @@ const handleDeleteChat = async (chatId) => {
               <p><b>Start:</b> {trip.STARTDATE}</p>
               <p><b>End:</b> {trip.ENDDATE}</p>
               <p><b>Cost:</b> {trip.COST}</p>
+              <p><b>No of Person :</b>{trip.TRAVELLERSCOUNT}</p>
+              <div className="tripButtons">
+                <button 
+                      className="btn view-trip"
+                >
+                      View Trip
+                </button><button onClick={() => handleDeleteTrip(trip.ID)}
+                      className="btn trip-delete"
+                      onMouseOver={(e) => (e.target.style.backgroundColor = "#c0392b")}
+                >
+                      Delete Trip
+                </button>
+              </div>
+              
             </div>
           ))
         )}
@@ -187,6 +224,18 @@ const handleDeleteChat = async (chatId) => {
               <p><b>Start:</b> {trip.STARTDATE}</p>
               <p><b>End:</b> {trip.ENDDATE}</p>
               <p><b>Rating:</b> {trip.RATING}</p>
+              <div className="tripButtons">
+                <button 
+                      className="btn view-trip"
+                >
+                      View Trip
+                </button><button onClick={() => handleDeleteTrip(trip.ID)}
+                      className="btn trip-delete"
+                      onMouseOver={(e) => (e.target.style.backgroundColor = "#c0392b")}
+                >
+                      Delete Trip
+                </button>
+              </div>
             </div>
           ))
         )}

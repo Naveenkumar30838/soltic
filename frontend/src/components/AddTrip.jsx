@@ -129,6 +129,7 @@ const AddTrip = () => {
           type="number"
           name="travellerscount"
           value={formData.travellerscount}
+          min={1}
           onChange={handleChange}
           required
         />

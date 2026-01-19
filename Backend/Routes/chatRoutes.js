@@ -4,7 +4,7 @@ import requireAuth from "../Middleware/requireAuth.js";
 import {mainWithHistory} from '../apis.js'
 const router = express.Router();
 
-router.get("/chats/:username",requireAuth ,  async (req, res) => {
+router.get("/chats/:username",requireAuth ,  async(req, res) => {
   try {
     const username = req.params.username;
     const result = await Chats.find({ username: req.params.username })
@@ -94,6 +94,7 @@ router.get("/c/:id", async (req, res) => {
 
 
 router.post("/chat/create",requireAuth, async (req, res) => {
+  // to create a new chatId and return it
   try {
     const username = req.session.username;
     const chatId = `chat_${Date.now()}`;
@@ -103,7 +104,6 @@ router.post("/chat/create",requireAuth, async (req, res) => {
       username,
       chat: []
     });
-
     return res.json({
       status: "chat_created",
       chatId

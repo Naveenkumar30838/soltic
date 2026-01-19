@@ -61,6 +61,9 @@ router.post("/login", async (req, res) => {
       return res.json({
         status: "already_logged_in",
         message: "User already logged in from another session",
+        data: {
+        username: user.USERNAME,
+       },
       });
     }
 
@@ -199,6 +202,7 @@ router.post("/signup", async (req, res) => {
 
 // Route to check whether current requesting session is authenticated or not 
 router.get("/auth" , async (req , res)=>{
+  console.log("Auth Check Requested ");
   const {sessionId , username} = req.session;
   if (!sessionId || !username){
     return res.json({ authenticated: false });

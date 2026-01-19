@@ -24,6 +24,8 @@ useEffect(() => {
       try {
         const res = await axios.get(`${BASE_URL}/auth/`);
         if (!res.data || res.data.authenticated !== true) {
+          console.log("Navigate to login from chat.jsx");
+          // return <h1>Not Found</h1>;
           return navigate("/login");
         }
         setUsername(res.data.username);    // save username for profile use
@@ -89,7 +91,6 @@ const getresponse = async (userMessage) => {
   const openProfile = async () => {
     if (!username) return;
     try {
-      console.log("Profile Clicked ");
       navigate(`/profile/${username}`, ); 
     } catch (err) {
       console.error("Profile fetch error", err);

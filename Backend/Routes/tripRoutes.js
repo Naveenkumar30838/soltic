@@ -52,4 +52,41 @@ router.post("/trips", requireAuth, async (req, res) => {
   }
 });
 
+router.delete("/trips/:id", requireAuth, async (req, res) => {
+  try {
+    const username = req.session.username;
+    const tripId = req.params.id;
+
+    if (!username) {
+      return res.json({ status: "not_logged_in" });
+    }
+
+    // Delete only if the trip belongs to the logged-in user
+    const [result] = await conn.execute(
+      "DELETE FROM TRIPS WHERE ID = ? AND USERNAME = ?",
+      [tripId, username]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.json({
+        status: "error",
+        message: "Trip not found or not authorized to delete",
+      });
+    }
+
+    res.json({
+      status: "success",
+      message: "Trip deleted successfully",
+      deletedId: tripId,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.json({
+      status: "error",
+      message: "Database delete failed",
+    });
+  }
+});
+
 export default router;

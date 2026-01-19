@@ -25,7 +25,6 @@ const Login = () => {
       );
 
       const status = response.data.status;
-      console.log("Auth Route Status : " , status)
       // Backend case 1: user not found → redirect to signup
       if (status === "user_not_found") {
         setError("No Such User Exists.Please SignUp")
@@ -33,9 +32,11 @@ const Login = () => {
 
       // Backend case 2: already logged in → redirect to chat
       if (status === "already_logged_in" || status === "login_success") {
-        const res = await axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
-        console.log("Chat create route response " , res.data.chatId);
-        return navigate(`/chat/${res.data.chatId}`);
+        // const res = await axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
+        // console.log("Chat create route response " , res.data.chatId);
+        // return navigate(`/chat/${res.data.chatId}`);
+        // after login redirect to profile instead of chat
+        return navigate(`/profile/${response.data.data.username}`)
       }
 
       // Fallback error message

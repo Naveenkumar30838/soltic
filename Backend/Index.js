@@ -11,7 +11,6 @@ import authRoutes from './Routes/authRoutes.js';
 import chatRoutes from './Routes/chatRoutes.js';
 import profileRoutes from './Routes/profileRoutes.js';
 import tripRoutes from './Routes/tripRoutes.js';
-// import {  FEW_SHOT_EXAMPLES } from "./config/geminiConfig.js";
 
 dotenv.config()
 const app = express();
@@ -53,7 +52,11 @@ app.use("/" , tripRoutes);
 
 
 app.get('/', (req, res) => {
-  res.send("Home Page");
+  res.json({status : "Api is running "});
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "404! Page Not Found" });
 });
 
 app.listen(process.env.PORT || 5000, () => 

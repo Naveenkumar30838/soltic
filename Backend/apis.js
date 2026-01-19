@@ -27,14 +27,17 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const gemini_api_key = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenerativeAI(gemini_api_key);
 
-export async function mainWithHistory(message, history = []) {
 
+export async function mainWithHistory(message, history = []) {
+    
     const formattedHistory = history.flatMap(item => [
     { role: "user", parts: [{ text: item.message }] },
     { role: "model", parts: [{ text: item.response }] }
   ]);
 
     try {
+       
+        
         const model = ai.getGenerativeModel({ 
             // model: "gemini-2.0-flash-exp",
             model:"gemini-2.0-flash",
@@ -43,7 +46,6 @@ export async function mainWithHistory(message, history = []) {
                 parts: [{ text: TRAVEL_AGENT_SYSTEM_PROMPT }],
             },
         });
-        
         // Start a chat session with history
         const chat = model.startChat({
             history: formattedHistory, // Pass previous conversation
@@ -51,14 +53,14 @@ export async function mainWithHistory(message, history = []) {
                 maxOutputTokens: 1000,
             },
         });
-        
         // Send the new message
         const result = await chat.sendMessage(message);
+        console.log("Gemini API response:", result);
         const text  = result.response.text();
         return text;
         
     } catch (error) {
-        console.error("Error in mainWithHistory():", error);
+        console.error("Error in mainWithHistory (gemini api call) ");
         return "Error generating response";
     }
 }

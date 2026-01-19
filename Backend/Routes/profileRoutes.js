@@ -91,17 +91,31 @@ router.get("/profile/:username/trips", async (req, res) => {
     const upcoming = trips.filter(t => new Date(t.STARTDATE) > today);
     const past = trips.filter(t => new Date(t.ENDDATE) < today);
 
+    // Helper function to format as YYYY-MM-DD
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toISOString().split("T")[0];
+    };
+
+    // Format all trip date fields
+    const formatTrips = (arr) =>
+      arr.map(t => ({
+        ...t,
+        STARTDATE: formatDate(t.STARTDATE),
+        ENDDATE: formatDate(t.ENDDATE)
+      }));
+
     res.json({
       status: "success",
-      upcoming,
-      past
+      upcoming: formatTrips(upcoming),
+      past: formatTrips(past)
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ status: "error" });
   }
 });
-
 
 
 export default router;

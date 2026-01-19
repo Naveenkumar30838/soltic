@@ -134,6 +134,27 @@
 .trip-card p {
   margin: 3px 0;
 }
+.tripButtons{
+  display: flex;
+  column-gap: 12px;
+  margin-top: 8px;
+}
+.view-trip{
+  background-color: green;
+  color: white!important;
+    transition: 0.2s ease;
+
+}
+.view-trip:hover{
+  background-color: rgb(0, 102, 0);
+  color: white!important;
+}
+.trip-delete{
+  background-color: #fb3030;
+  cursor: pointer;
+  color: white!important;
+  transition: 0.2s ease;
+};
 /* CHAT HISTORY                  */
 .chat-section {
   background: #f4f7fb;

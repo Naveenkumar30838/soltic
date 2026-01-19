@@ -35,3 +35,6 @@ e.g. click's let's start the trip (for gaya):
     user select: next place ... show travelling details for that place and asks what next once user click he has arrived on that place , asks what next (travel guide at that place ) , once user click he has completed his travelling on that place  , asks what next (e.g travel to next place , go to hotel , have food ) .... 
 
     some everytime available option : pause trip , end trip , increase budget , resume trip . ( i message max would also be there along with the user button inputs for more enhanced feedbacks ).
+
+
+    <!-- Handle Error when the user is logged in and we try to login again  -->

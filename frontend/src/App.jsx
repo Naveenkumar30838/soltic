@@ -14,6 +14,7 @@ function App() {
         <Route path='/profile/:username' element={<Profile></Profile>} />
         <Route path='/chat/:chatId' element={<Chat></Chat>}/>
         <Route path="/addTrip" element={<AddTrip />} />
+        <Route path="*" element={<div> <h1>404! Page Not Found <hr /><br /></h1> <p> <a href="http://localhost:5173/login">Login In to See more </a></p> </div>} />
       </Routes>
     </Router>
   )
