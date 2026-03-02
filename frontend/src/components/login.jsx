@@ -23,7 +23,6 @@ const Login = () => {
         formData,
         { withCredentials: true }
       );
-
       const status = response.data.status;
       // Backend case 1: user not found → redirect to signup
       if (status === "user_not_found") {
@@ -36,6 +35,7 @@ const Login = () => {
         // console.log("Chat create route response " , res.data.chatId);
         // return navigate(`/chat/${res.data.chatId}`);
         // after login redirect to profile instead of chat
+        console.log("username " ,response.data.data.username)
         return navigate(`/profile/${response.data.data.username}`)
       }
 

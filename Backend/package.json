@@ -1,10 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
-    "@google/genai": "^1.28.0",
+    "@google/genai": "^1.37.0",
     "@google/generative-ai": "^0.24.1",
     "body-parser": "^2.2.0",
     "compromise": "^14.14.4",
@@ -17,6 +17,7 @@
     "mongoose": "^8.19.3",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.11",
+    "sarvamai": "^1.1.4",
     "uuidv4": "^6.2.13"
   }
 }

@@ -4,6 +4,7 @@ import Login from "./components/login.jsx";
 import Signup from "./components/signup.jsx";
 import Profile from "./components/profile.jsx";
 import AddTrip from './components/addTrip.jsx';
+import Trip from './components/trip.jsx'
 function App() {
   return(
     <Router>
@@ -13,6 +14,7 @@ function App() {
         <Route path='/signup' element={<Signup></Signup>}/>
         <Route path='/profile/:username' element={<Profile></Profile>} />
         <Route path='/chat/:chatId' element={<Chat></Chat>}/>
+        <Route path='/trip/:tripId' element={<Trip></Trip>}/>
         <Route path="/addTrip" element={<AddTrip />} />
         <Route path="*" element={<div> <h1>404! Page Not Found <hr /><br /></h1> <p> <a href="http://localhost:5173/login">Login In to See more </a></p> </div>} />
       </Routes>

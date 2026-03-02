@@ -7,7 +7,7 @@ export default async function requireAuth(req, res, next) {
     const username = req.session?.username;
     // Step 1 — check if session exists in the request
     if (!sessionId || !username) {
-      console.log("Middlewre response");
+      console.log("Middlewre response Here");
       return res.json({
         status: "not_logged_in",
         message: "You must be logged in to access this resource",

@@ -17,8 +17,8 @@ const Signup = () => {
     mob: "",
     password: "",
     joiningDate: new Date().toISOString().split("T")[0],
-    profession: "",     // ✅ Added
-    bio: "",            // ✅ Added
+    profession: "",     
+    bio: "",            
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,9 +40,9 @@ const Signup = () => {
         formData,
         { withCredentials: true }
       );
-
       if (response.data?.status === "signup_success") {
-        const res = axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
+        const res = await axios.post(`${BASE_URL}/chat/create` , {} , {withCredentials:true});
+        
         return navigate(`/chat/${res.data.chatId}`);
       } else {
         setErrorMsg(response.data?.message || "Signup failed. Please try again.");

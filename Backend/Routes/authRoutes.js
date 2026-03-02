@@ -10,6 +10,7 @@ const router = express.Router();
 
 // LOGIN ROUTE
 router.post("/login", async (req, res) => {
+  console.log("Login Requested")
   try {
     const { email, password } = req.body;
     
@@ -58,6 +59,8 @@ router.post("/login", async (req, res) => {
     const existingSession = await Session.findOne({ username: user.USERNAME });
 
     if (existingSession) {
+      console.log(`Existing Session Response in Login Route with username ${user.USERNAME} : ` ,existingSession);
+      
       return res.json({
         status: "already_logged_in",
         message: "User already logged in from another session",
@@ -209,6 +212,8 @@ router.get("/auth" , async (req , res)=>{
   }
 
   const existingSession = await Session.findOne({sessionId, username});
+  console.log(`Existing Session check in Auth Route with sessionId ${sessionId } and username : ${username} is : ` , existingSession);
+  
   if(existingSession){
     return res.json({
       authenticated:true, 

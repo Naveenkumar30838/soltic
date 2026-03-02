@@ -8,29 +8,27 @@ const Profile = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const { username } = useParams();
 
-  // ================================ 
   // STATES
-  // ================================
   const [profile, setProfile] = useState(null);
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [pastTrips, setPastTrips] = useState([]);
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ================================
-  // AUTH CHECK (USE YOUR CODE)
-  // ================================
+  // AUTH CHECK 
   useEffect(() => {
     const verifySession = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/auth/`, {
           withCredentials: true,
         });
-
+        console.log("We are Here in Profile.jsx/verifySession")
+        console.log('And response is : ' , res.data);
         if (!res.data || res.data.authenticated !== true) {
           return navigate("/login");
         }
       } catch (err) {
+        consol.log("Error in Verify Session")
         return navigate("/login");
       }
     };
@@ -102,6 +100,9 @@ const handleDeleteChat = async (chatId) => {
     }
     navigate(`/signup`);
   };
+  const handleViewTrip = async (tripId)=>{
+    navigate(`/trip/${tripId}`)
+  }
 
   const handleDeleteTrip = async (tripId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this trip?");
@@ -193,7 +194,7 @@ const handleDeleteChat = async (chatId) => {
               <p><b>Cost:</b> {trip.COST}</p>
               <p><b>No of Person :</b>{trip.TRAVELLERSCOUNT}</p>
               <div className="tripButtons">
-                <button 
+                <button onClick={() => handleViewTrip(trip.ID)}
                       className="btn view-trip"
                 >
                       View Trip
@@ -225,11 +226,12 @@ const handleDeleteChat = async (chatId) => {
               <p><b>End:</b> {trip.ENDDATE}</p>
               <p><b>Rating:</b> {trip.RATING}</p>
               <div className="tripButtons">
-                <button 
+                <button onClick={()=>{handleViewTrip(trip.ID)}}
                       className="btn view-trip"
                 >
                       View Trip
-                </button><button onClick={() => handleDeleteTrip(trip.ID)}
+                </button>
+                <button onClick={() => handleDeleteTrip(trip.ID)}
                       className="btn trip-delete"
                       onMouseOver={(e) => (e.target.style.backgroundColor = "#c0392b")}
                 >
