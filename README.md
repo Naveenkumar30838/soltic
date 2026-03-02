@@ -1,40 +1,206 @@
-To run the Backend , type the following commands : 
-```npm install ```
+## **SOLTIC – AI-Powered Travel Assistant**
 
-Create env file from .env.example file with your credential 
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![AI](https://img.shields.io/badge/Powered_By-Gemini_2.5_Flash-purple)
+![Node](https://img.shields.io/badge/Backend-Node.js-green)
+![React](https://img.shields.io/badge/Frontend-React-orange)
+![Build](https://img.shields.io/badge/Build-Passing-success)
+![API](https://img.shields.io/badge/API%20Usage-Heavy-blueviolet)
+![Contributions](https://img.shields.io/badge/Contributions-Welcome-yellow)
 
-```node index.js ```
-or 
-```nodemon index.js```
-
-
-To run the Frontend (Backend Must be Running Successfully : ) type the following commands in the terminal : 
-
-```npm install ```
-(installing necessary dependencies and sub dependencies)
-
-```npm run dev ```
-( to start the frontend server , default on port 5173)
-<!-- Backend : 
-Cors  -->
-
-<!-- Future Work  -->
-1. Add User Profession 
-2. Make automatically creating the soltic database in the user system (from db.js)
-3. remove secure:false from cookie in index.js for production 
-4. Make the chat more relevant by providing user wishlist , user's recent travel history , profession etc . 
-5. If the model is suggesting some places , location what it must suggest e.g. Must visit sites with their timeline (best time to visit  , if their is ticket for that place ) , it should show hotels (with ratings , review , prices , room availability , checkin checkout timings ) , food options nearby , crowd timing , weather , must carry things , historial importance of that place (if available) , must do things in that place (what most people do their , most popular food or anything ) , How can we travel from current place to that place 
-6. Live Trip Monitoring (guiding for that place , tracking the user's trip details and guiding or suggesting him things e.g say i just dropped at mahabodhi temple in gaya ..... so it will automatically show / suggest me some food options / hotel nearby ....it will show me go to this hotel check in there rest till 2pm (say ) and then visit to mahabodhi temple (will show what to do inside the temple , top attraction and other thins) , then go to there ... and once we complete something (we can give the user a button on clicking to which he can respond whether he has done this task or not , say he visited the temple then he will respond to us by clicking on the button ) it's live planning my trip ... ) ............... this will start once he clicks let's start the trip (he can see the detailed roadmap and we will showing him the step by step roadmap )
-e.g. click's let's start the trip (for gaya): 
-    1. fetches current location
-    2. suggest to onboard to the train (with all the persons and luggage , cautionery things)(will show the train timing if he has booked with us) (or show options to book trains )
-    3. Asks the user ( if he has successfully visited gaya (can verify it with user location)) by showing a button if he responds yes (move to step4 ) ... if not shows his journey for gaya if uncomplete or if he dropped to wrong location shows way to reach gaya from that location 
-    4.once he drops in gaya (checks his timing ) and accordingly plans the things .. say it's late night (he arrived ) ... agent will ask whether you want to stay there , want to eat some food (show food options nearby) or would directly like to move to bodhgaya (will briefly show how it will be travelling routes , where i can get the local auto's routes , metro's buses and other ) 
-    5. once he arrives in bodh gaya ... may ask his choice (food , rest (how many hours  , helps to check in hotel (shows hotel prices nearby or best prices(according to the trip budget) ) )) then plans the next things say visit to this place at this time (can show descriptive text take auto from there (with in this price range ) and reach this place , must do things at that place ) and once the user responds that he has visited that places will ask 
-    what next to the user (say next place , have food ,  )
-    user select: next place ... show travelling details for that place and asks what next once user click he has arrived on that place , asks what next (travel guide at that place ) , once user click he has completed his travelling on that place  , asks what next (e.g travel to next place , go to hotel , have food ) .... 
-
-    some everytime available option : pause trip , end trip , increase budget , resume trip . ( i message max would also be there along with the user button inputs for more enhanced feedbacks ).
+---
 
 
-    <!-- Handle Error when the user is logged in and we try to login again  -->
+**SOLTIC** is an **AI-powered travel assistant** that helps users plan trips, explore destinations, create itineraries, and get intelligent responses using
+
+The system integrates:
+
+* Real-time conversation with Gemini
+* AI-generated travel recommendations
+* Trip creation & management
+* User profile handling
+* Secure authentication
+* Clean and responsive UI
+
+---
+
+## 🔥 **Key Features**
+
+###  **Gemini-Based Travel Intelligence**
+
+* Uses Google’s **Gemini 2.5 Flash** model
+* Generates travel plans, day-wise itineraries, budgets, packing lists, etc.
+* Provides smart suggestions: weather, sightseeing, best routes, stay options
+
+###  **Trip Management**
+
+* Create trip
+* View/edit trip
+* Store trip preferences
+
+### 🔐 **Authentication System**
+
+* Session-based login
+* Protected routes
+* Autofetch user details
+
+###  **User Profile Support**
+
+* `/profile/:username` fetch
+* Delete account
+* Update profile info
+
+### ⚛️ **Frontend (React + Vite)**
+
+* Modern UI
+* React Router DOM
+* Axios API communication
+* Custom CSS for each page
+
+### **Backend (Node.js + Express)**
+
+* Gemini integration through API key
+* Secure backend endpoints
+* Session + cookies support
+
+---
+
+## 🧠 **How Gemini is Used**
+
+SOLTIC uses Gemini via google genAi module.
+The AI then returns:
+
+* Trip recommendations
+* Optimal routes
+* Budget estimation
+* Travel safety info
+* Best seasons to visit
+* City-wise guides
+
+---
+
+## 📁 **Project Structure**
+
+```
+soltic/
+│
+├── backend/
+│   ├── server.js
+│   ├── routes/
+│   │    ├── authRoutes.js  
+│   │    ├── chatRoutes.js
+│   │    └── ProfilRoutes.js
+│   ├── controllers/
+│   ├── db/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Profile.jsx
+│   │   │   ├── AddTrip.jsx
+│   │   │   └── Chat.jsx
+│   │   ├── styles/
+│   │   │   ├── profile.css
+│   │   │   └── addTrip.css
+│   │   └── main.jsx
+│   └── index.html
+│
+└── README.md
+```
+
+---
+
+## ⚙️ **Setup & Installation**
+
+### **Backend**
+
+```
+cd backend
+npm install
+nodemon/node Index.js
+```
+
+### **Frontend**
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+### **Environment Variables**
+
+Frontend `.env`:
+
+```
+VITE_BASE_URL=http://localhost:5173
+```
+
+Backend `.env`:
+
+```
+gemini_api_key=YOUR_GEMINI_KEY
+SESSION_SECRET=your_secret
+```
+
+---
+
+## 🌐 **API Endpoints**
+
+### **Gemini Travel AI**
+
+| Method | Endpoint      | Description                                    |
+| ------ | ------------- | ---------------------------------------------- |
+| POST   | `/travel/ask` | Send message to Gemini and receive AI response |
+
+### **Trips**
+
+| Method | Endpoint    | Description     |
+| ------ | ----------- | --------------- |
+| POST   | `/trip/add` | Add new trip    |
+| GET    | `/trip/all` | Fetch all trips |
+| DELETE | `/trip/:id` | Delete a trip   |
+
+### **Profile**
+
+| Method | Endpoint             | Description   |
+| ------ | -------------------- | ------------- |
+| GET    | `/profile/:username` | Fetch profile |
+| DELETE | `/profile/:username` | Remove user   |
+
+---
+
+## 🖼️ **Chat Model Outcome**
+
+---
+* ChatBot Like Interface(for the Agent): 
+<img width="959" height="446" alt="{8BBCD3EE-5AD5-4D99-A765-ECDAE94B93CD}" src="https://github.com/user-attachments/assets/fab66fa0-c553-4214-b7d2-c83fd8f58062" />
+
+* User Profile Page (User Details , ChatHistory , Upcoming , past Trips): 
+<img width="935" height="444" alt="{C517D034-24DA-4D01-B62A-17E20CE8A6F2}" src="https://github.com/user-attachments/assets/db42d814-df69-404b-976a-affc8392740d" />
+
+## 🧪 **Testing**
+
+* Gemini responses validation
+* API rate-limit handling
+* Session expiry tests
+* Profile delete flow
+* Trip creation stress testing
+
+---
+
+## 📜 **License**
+
+MIT License — free for personal & commercial use.
+
+---
+
+## 🤝 **Contributing**
+
+Pull requests and improvements are welcome!
+
+---
+
+
+
