@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AddTrip.css"; // <-- Make sure this file exists
+import "./AddTrip.css"; 
 
 const AddTrip = () => {
   const navigate = useNavigate();
