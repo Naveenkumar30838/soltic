@@ -3,7 +3,7 @@ import Chat from "./components/chat.jsx";
 import Login from "./components/login.jsx";
 import Signup from "./components/signup.jsx";
 import Profile from "./components/profile.jsx";
-import AddTrip from './components/addTrip.jsx';
+import AddTrip from './components/AddTrip.jsx';
 import Trip from './components/trip.jsx'
 function App() {
   return(
