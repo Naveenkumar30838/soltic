@@ -17,9 +17,8 @@ const AddTrip = () => {
     travellerscount: ""
   });
 
-  // ============================
   // VERIFY SESSION
-  // ============================
+
   useEffect(() => {
     const verify = async () => {
       try {
