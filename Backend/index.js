@@ -26,7 +26,6 @@ app.use(cors({
   credentials:true,
   optionsSuccessStatus:200,
 }));
-app.options('*', cors()); 
 
 // Data base Connection  
 connectMongo();
