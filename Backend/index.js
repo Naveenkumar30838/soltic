@@ -19,11 +19,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://soltic-deploy.vercel.app'
-  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials:true,
   optionsSuccessStatus:200,
