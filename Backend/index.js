@@ -19,16 +19,14 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials:true,
   optionsSuccessStatus:200,
-  cookie: {
-    secure: true,           
-    httpOnly: true,
-    sameSite: 'none',       
-    maxAge: 1000 * 60 * 60 * 24  // 1 day
-  }
 }));
+app.options('*', cors()); 
 
 // Data base Connection  
 connectMongo();
@@ -42,7 +40,8 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,       // 1 day
       httpOnly: true,
-      secure: false,                     // set true only in HTTPS
+      secure: false,  
+      sameSite:"none",                   // set true only in HTTPS
     },
     store: MongoStore.create({// Required for persistently storing connect-mongo models 
       mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
