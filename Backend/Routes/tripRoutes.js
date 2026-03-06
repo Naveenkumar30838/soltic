@@ -4,6 +4,8 @@ import requireAuth  from "../Middleware/requireAuth.js";
 const router = express.Router();
 
 router.post("/trips", requireAuth, async (req, res) => {
+  console.log("Request Received on the /trips route with the data")
+  console.log(req.body);
   // Adds a new Trip in the Trips database 
   try {
     const username = req.session.username;
