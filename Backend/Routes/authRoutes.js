@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
 
     if (existingSession) {
       console.log(`Existing Session Response in Login Route with username ${user.USERNAME} : ` ,existingSession);
-      
+      console.log("For the Existing Session req.session is : " , req.session);
       return res.json({
         status: "already_logged_in",
         message: "User already logged in from another session",
@@ -73,7 +73,13 @@ router.post("/login", async (req, res) => {
     const sessionId = uuidv4();
     req.session.username = user.USERNAME;
     req.session.sessionId = sessionId;
-    await req.session.save();
+    req.session.save((err) => {
+      if (err) {
+        console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
+        return res.json({ status: "server_error", message: err.message });
+      }
+
+    });
 
     await Session.create({
       sessionId,
@@ -177,7 +183,12 @@ router.post("/signup", async (req, res) => {
     const sessionId = uuidv4();
     req.session.username = username;
     req.session.sessionId = sessionId;
-    await req.session.save();
+    req.session.save((err) => {
+      if (err) {
+        console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
+        return res.json({ status: "server_error", message: err.message });
+      }
+    });
 
     await Session.create({
       username,
@@ -205,9 +216,11 @@ router.post("/signup", async (req, res) => {
 
 // Route to check whether current requesting session is authenticated or not 
 router.get("/auth" , async (req , res)=>{
-  console.log("Auth Check Requested ");
+  // console.log("Auth Check Requested ");
   const {sessionId , username} = req.session;
+  // console.log("Request.session is : " , req.session);
   if (!sessionId || !username){
+    console.log("Returning False From Here 1");
     return res.json({ authenticated: false });
   }
 
@@ -220,6 +233,7 @@ router.get("/auth" , async (req , res)=>{
       username:req.session.username
     })
   }
+  
   return res.json({
     authenticated:false
   })
