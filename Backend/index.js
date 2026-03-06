@@ -26,7 +26,13 @@ app.use(cors({
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials:true,
-  optionsSuccessStatus:200
+  optionsSuccessStatus:200,
+  cookie: {
+    secure: true,           
+    httpOnly: true,
+    sameSite: 'none',       
+    maxAge: 1000 * 60 * 60 * 24  // 1 day
+  }
 }));
 
 // Data base Connection  
