@@ -35,16 +35,12 @@ const AddTrip = () => {
     verify();
   }, []);
 
-  // ============================
   // HANDLE INPUT CHANGE
-  // ============================
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ============================
   // HANDLE SUBMIT
-  // ============================
   const handleSubmit = async (e) => {
     e.preventDefault();
 

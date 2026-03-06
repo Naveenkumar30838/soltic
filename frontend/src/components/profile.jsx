@@ -28,7 +28,7 @@ const Profile = () => {
           return navigate("/login");
         }
       } catch (err) {
-        consol.log("Error in Verify Session")
+        console.log("Error in Verify Session")
         return navigate("/login");
       }
     };
