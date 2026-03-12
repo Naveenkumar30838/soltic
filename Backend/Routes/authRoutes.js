@@ -9,18 +9,142 @@ import session from "express-session";
 const router = express.Router();
 
 // LOGIN ROUTE
+// router.post("/login", async (req, res) => {
+//   console.log("Login Requested")
+//   try {
+//     const { email, password } = req.body;
+    
+//     if (!email) {
+//       return res.json({
+//         status: "missing_email",
+//         message: "Email is required",
+//       });
+//     }
+//     // ADD THIS: Check if password is provided
+//     if (!password) {
+//       return res.json({
+//         status: "missing_password",
+//         message: "Password is required",
+//       });
+//     }
+
+//     const [rows] = await conn.execute(
+//       "SELECT * FROM PROFILE WHERE EMAIL = ?",
+//       [email]
+//     );
+    
+//     if (rows.length === 0) {
+//       return res.json({
+//         status: "user_not_found",
+//         message: "No user found with this email.Please Sign Up",
+//       });
+//     }
+
+//     const user = rows[0];
+
+//     // ADD THIS: Validate password
+//     // If you're storing hashed passwords (which you should be):
+//     // const bcrypt = require('bcrypt');
+//     // const isPasswordValid = await bcrypt.compare(password, user.PASSWORD);
+    
+//     // //  text :
+//     const isPasswordValid = password === user.PASSWORD;
+    
+//     if (!isPasswordValid) {
+//       return res.json({
+//         status: "invalid_credentials",
+//         message: "Invalid email or password",
+//       });
+//     }
+//     const existingSession = await Session.findOne({ username: user.USERNAME });
+//     // Need to solve the issue when the session is saved in mongodb but it doesn't exists in frontend cookies
+     
+
+//     if (existingSession) {
+//        const {sessionId:sessionIdCook , username:usernameCook} = req.session;
+//         if (!sessionIdCook || !usernameCook){
+//           console.log("Stage : There is existing session in Mongodb, but no existing session in Frontend So removing it from Mongo and redirecting to login ")
+//           await Session.deleteOne({ username:user.USERNAME});
+
+//           const existingSession = await Session.findOne({ username: user.USERNAME });
+//           console.log("Existing Session Response Now is : " , existingSession);
+//           console.log("Redirecting to Login");
+//           res.redirect(req.originalUrl);
+//           return;
+//         }
+
+
+//       console.log(`Existing Session Response in Login Route with username ${user.USERNAME} : ` ,existingSession);
+//       console.log("For the Existing Session req.session is : " , req.session);
+//       return res.json({
+//         status: "already_logged_in",
+//         message: "User already logged in from another session",
+//         data: {
+//         username: user.USERNAME,
+//        },
+//       });
+//     }
+
+//     const sessionId = uuidv4();
+//     req.session.username = user.USERNAME;
+//     req.session.sessionId = sessionId;
+//     req.session.save((err) => {
+//       if (err) {
+//         console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
+//         return res.json({ status: "server_error", message: err.message });
+//       }
+
+//       console.log("Returing Login_Success in Last");
+//       return res.json({
+//         status: "login_success",
+//         message: "User logged in successfully",
+//         data: {
+//           username: user.USERNAME,
+//           sessionId,
+//         },
+//       });
+
+//     });
+
+//     // await Session.create({
+//     //   sessionId,
+//     //   username: user.USERNAME,
+//     //   createdAt: new Date(),
+//     // });
+
+//     // console.log("Returing Login_Success in Last");
+//     // return res.json({
+//     //   status: "login_success",
+//     //   message: "User logged in successfully",
+//     //   data: {
+//     //     username: user.USERNAME,
+//     //     sessionId,
+//     //   },
+//     // });
+
+//   } catch (err) {
+//     console.error("Login error:", err);
+//     return res.json({
+//       status: "server_error",
+//       message: "Internal server error during login",
+//     });
+//   }
+// });
+
 router.post("/login", async (req, res) => {
-  console.log("Login Requested")
+  console.log("Login Requested");
+
   try {
     const { email, password } = req.body;
-    
+
+    // 1️⃣ Validate input
     if (!email) {
       return res.json({
         status: "missing_email",
         message: "Email is required",
       });
     }
-    // ADD THIS: Check if password is provided
+
     if (!password) {
       return res.json({
         status: "missing_password",
@@ -28,77 +152,96 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // 2️⃣ Find user
     const [rows] = await conn.execute(
       "SELECT * FROM PROFILE WHERE EMAIL = ?",
       [email]
     );
-    
+
     if (rows.length === 0) {
       return res.json({
         status: "user_not_found",
-        message: "No user found with this email.Please Sign Up",
+        message: "No user found with this email. Please Sign Up",
       });
     }
 
     const user = rows[0];
 
-    // ADD THIS: Validate password
-    // If you're storing hashed passwords (which you should be):
-    // const bcrypt = require('bcrypt');
-    // const isPasswordValid = await bcrypt.compare(password, user.PASSWORD);
-    
-    // //  text :
+    // 3️⃣ Validate password
     const isPasswordValid = password === user.PASSWORD;
-    
+
     if (!isPasswordValid) {
       return res.json({
         status: "invalid_credentials",
         message: "Invalid email or password",
       });
     }
-    const existingSession = await Session.findOne({ username: user.USERNAME });
+
+    // 4️⃣ Check existing session in MongoDB
+    const existingSession = await Session.findOne({
+      username: user.USERNAME,
+    });
 
     if (existingSession) {
-      console.log(`Existing Session Response in Login Route with username ${user.USERNAME} : ` ,existingSession);
-      console.log("For the Existing Session req.session is : " , req.session);
-      return res.json({
-        status: "already_logged_in",
-        message: "User already logged in from another session",
-        data: {
-        username: user.USERNAME,
-       },
-      });
+      const { sessionId: sessionIdCook, username: usernameCook } =
+        req.session || {};
+
+      // stale session in DB but no cookie in browser
+      if (!sessionIdCook || !usernameCook) {
+        console.log(
+          "Stale Mongo session found but no frontend cookie. Removing it."
+        );
+
+        await Session.deleteOne({ username: user.USERNAME });
+      } else {
+        console.log(
+          `User already logged in from another session: ${user.USERNAME}`
+        );
+
+        return res.json({
+          status: "already_logged_in",
+          message: "User already logged in from another session",
+          data: { username: user.USERNAME },
+        });
+      }
     }
 
+    // 5️⃣ Create new session
     const sessionId = uuidv4();
+
     req.session.username = user.USERNAME;
     req.session.sessionId = sessionId;
-    req.session.save((err) => {
+
+    req.session.save(async (err) => {
       if (err) {
-        console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
-        return res.json({ status: "server_error", message: err.message });
+        console.error("Session Save Error:", err);
+        return res.json({
+          status: "server_error",
+          message: err.message,
+        });
       }
 
-    });
-
-    await Session.create({
-      sessionId,
-      username: user.USERNAME,
-      createdAt: new Date(),
-    });
-
-
-    return res.json({
-      status: "login_success",
-      message: "User logged in successfully",
-      data: {
+      // 6️⃣ Store session reference in MongoDB
+      await Session.create({
         username: user.USERNAME,
         sessionId,
-      },
-    });
+        createdAt: new Date(),
+      });
 
+      console.log("Login Success");
+
+      return res.json({
+        status: "login_success",
+        message: "User logged in successfully",
+        data: {
+          username: user.USERNAME,
+          sessionId,
+        },
+      });
+    });
   } catch (err) {
     console.error("Login error:", err);
+
     return res.json({
       status: "server_error",
       message: "Internal server error during login",
@@ -106,7 +249,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-  //  LOGOUT ROUTE
+
+//    LOGOUT ROUTE
   
 router.post("/logout", async (req, res) => {
   try {
@@ -220,7 +364,9 @@ router.get("/auth" , async (req , res)=>{
   const {sessionId , username} = req.session;
   // console.log("Request.session is : " , req.session);
   if (!sessionId || !username){
-    console.log("Returning False From Here 1");
+    console.log("Returning False From Here 1 where req.session is : ");
+    console.log(req.session);
+
     return res.json({ authenticated: false });
   }
 
