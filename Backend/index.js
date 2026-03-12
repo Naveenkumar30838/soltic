@@ -28,7 +28,7 @@ app.use(cors({
 // Data base Connection  
 connectMongo();
 
-
+app.set("trust proxy", 1); // for Production (render)  made it , so they accept secure:true(accepts https only) in cookies
 app.use(
   session({
     secret: process.env.MONGO_SECRET,             
@@ -38,8 +38,9 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24,       // 1 day
       httpOnly: true,
       secure: false,  
-      sameSite:"none",                   // set true only in HTTPS (for Production)
-      // sameSite:"lax",
+      sameSite:"lax", // for localhost only
+      // secure:true // for production uncomment these two 
+      // sameSite:"none",                   // set true only in HTTPS (for Production)
     },
     store: MongoStore.create({// Required for persistently storing connect-mongo models 
       mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
