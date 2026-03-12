@@ -37,10 +37,10 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,       // 1 day
       httpOnly: true,
-      secure: false,  
-      sameSite:"lax", // for localhost only
-      // secure:true // for production uncomment these two 
-      // sameSite:"none",                   // set true only in HTTPS (for Production)
+      // secure: false,  
+      // sameSite:"lax", // for localhost only
+      secure:true, // for production uncomment these two 
+      sameSite:"none",                   // set true only in HTTPS (for Production)
     },
     store: MongoStore.create({// Required for persistently storing connect-mongo models 
       mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
