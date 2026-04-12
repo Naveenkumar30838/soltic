@@ -2,11 +2,11 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "build":"npm install",
-    "start":"node index.js"
+    "build": "npm install",
+    "start": "node index.js"
   },
   "dependencies": {
-    "@google/genai": "^1.37.0",
+    "@google/genai": "^1.49.0",
     "@google/generative-ai": "^0.24.1",
     "body-parser": "^2.2.0",
     "compromise": "^14.14.4",

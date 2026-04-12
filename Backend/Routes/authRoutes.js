@@ -8,6 +8,10 @@ import session from "express-session";
 
 const router = express.Router();
 
+
+// Bugs : Unable to handle when there is session in db, but no session in browser (logged into one browser and trying to login from another )
+// (no matter there is an existing session or not , after login will start a new session always )
+
 // LOGIN ROUTE
 // router.post("/login", async (req, res) => {
 //   console.log("Login Requested")
@@ -58,7 +62,6 @@ const router = express.Router();
 //     }
 //     const existingSession = await Session.findOne({ username: user.USERNAME });
 //     // Need to solve the issue when the session is saved in mongodb but it doesn't exists in frontend cookies
-     
 
 //     if (existingSession) {
 //        const {sessionId:sessionIdCook , username:usernameCook} = req.session;

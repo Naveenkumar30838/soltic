@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AddTrip.css"; 
+import "./AddTrip.css";
 
 const AddTrip = () => {
   const navigate = useNavigate();
@@ -43,6 +43,15 @@ const AddTrip = () => {
   // HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (new Date(formData.enddate) < new Date(formData.startdate)) {
+      alert("End date must be after start date");
+      return;
+    }
+
+    if (formData.travellerscount < 1) {
+      alert("Travellers count must be at least 1");
+      return;
+    }
 
     try {
       const res = await axios.post(`${BASE_URL}/trips`, formData, {
@@ -60,6 +69,8 @@ const AddTrip = () => {
     }
   };
 
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="add-trip-container">
       <h2 className="add-trip-title">Add New Trip</h2>
@@ -70,6 +81,7 @@ const AddTrip = () => {
           type="date"
           name="startdate"
           value={formData.startdate}
+          min={today}
           onChange={handleChange}
           required
         />
@@ -88,6 +100,7 @@ const AddTrip = () => {
           type="date"
           name="enddate"
           value={formData.enddate}
+          min={formData.startdate || today}
           onChange={handleChange}
           required
         />
@@ -107,6 +120,7 @@ const AddTrip = () => {
           name="roomscount"
           value={formData.roomscount}
           onChange={handleChange}
+          min={1}
           required
         />
 
@@ -116,6 +130,7 @@ const AddTrip = () => {
           name="cost"
           value={formData.cost}
           onChange={handleChange}
+          min={0}
           required
         />
 
