@@ -108,12 +108,27 @@ router.get('/trip/:id',requireAuth,async (req , res)=>{
       message:"Error in Fetching Trip Details",
       tripDetails:"Error"
     })
-
-    
   }
-  
+})
 
+router.get('/trip/:id/generate-plan',requireAuth,async (req , res)=>{
+  try {
+    const id = req.params.id;
+    const [result] = await conn.execute('SELECT * FROM TRIPS WHERE ID = ? ' , [id]);
+    res.json({
+      status:"success",
+      message:"Trip Details Fetched Successfully",
+      tripDetails:result[0]
+    })
 
+  } catch (err) {
+    console.log("Error in Fetching Trip Details Inside trip/id")
+    res.json({
+      status:"failed",
+      message:"Error in Fetching Trip Details",
+      tripDetails:"Error"
+    })
+  }
 })
 
 export default router;
