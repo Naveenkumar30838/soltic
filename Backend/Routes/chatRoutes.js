@@ -98,12 +98,13 @@ router.post("/chat/create",requireAuth, async (req, res) => {
   try {
     const username = req.session.username;
     const chatId = `chat_${Date.now()}`;
-
-    await Chats.create({
-      id: chatId,
-      username,
-      chat: []
-    });
+    // No need to create a new chat document in MongoDB here, as it will be created when the user sends the first message. The chat history will be initialized at that time.
+    // creating Here wastes the storage space in MongoDB for chats that are never used. So we will create the chat document only when the user sends the first message.
+    // await Chats.create({
+    //   id: chatId,
+    //   username,
+    //   chat: []
+    // });
     return res.json({
       status: "chat_created",
       chatId

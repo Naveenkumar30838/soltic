@@ -6,6 +6,76 @@
   font-family: Arial, sans-serif;
   color: #222;
 }
+
+.navbar{
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 18px 50px;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    border-radius: 12px;
+    margin: 10px;
+}
+
+.navbar-logo{
+    font-size: 1.8rem;
+    font-weight: 800;
+
+    color: #1565c0;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.navbar-logo:hover{
+    color: #1976d2;
+}
+
+.navbar-right{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/*  START PLANNING  */
+
+.navbar-start-btn{
+    border: none;
+    outline: none;
+
+    background: #1565c0;
+    color: white;
+
+    padding: 12px 22px;
+
+    border-radius: 12px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.navbar-start-btn:hover{
+    background: #1976d2;
+    transform: translateY(-2px);
+}
+
 /* HEADINGS                      */
 .profile-container h2 {
   font-size: 22px;
