@@ -15,9 +15,6 @@ const connectMongo= async ()=>{
     }
 }
 
-
-
-
 // function updateDbConnection(){
 //     conn = mysql.createConnection({
 //         host:process.env.SQL_HOST,

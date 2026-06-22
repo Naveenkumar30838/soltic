@@ -5,11 +5,13 @@ import Signup from "./components/signup.jsx";
 import Profile from "./components/profile.jsx";
 import AddTrip from './components/AddTrip.jsx';
 import Trip from './components/trip.jsx'
+import Home from './components/home.jsx'
 function App() {
   return(
     <Router>
       <Routes>
-        <Route path='/' element={<Navigate to="/login" ></Navigate>}></Route>
+        <Route path='/' element={<Home></Home>}></Route>
+        {/* <Route path='/' element={<Navigate to="/login" ></Navigate>}></Route> */}
         <Route path='/login' element={<Login></Login>}/>
         <Route path='/signup' element={<Signup></Signup>}/>
         <Route path='/profile/:username' element={<Profile></Profile>} />

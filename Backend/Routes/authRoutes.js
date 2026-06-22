@@ -195,7 +195,11 @@ router.post("/login", async (req, res) => {
           "Stale Mongo session found but no frontend cookie. Removing it."
         );
 
-        await Session.deleteOne({ username: user.USERNAME });
+        const deleted = await Session.deleteOne({ username: user.USERNAME });
+          if (deleted.deletedCount === 0) {
+            return res.json({ status: "server_error", message: "Could not clear stale session" });
+          }
+
       } else {
         console.log(
           `User already logged in from another session: ${user.USERNAME}`
@@ -257,7 +261,7 @@ router.post("/login", async (req, res) => {
   
 router.post("/logout", async (req, res) => {
   try {
-    const { username , sessionId } = req.session;
+    const { username , sessionId } = req.session || {};
     if (!sessionId || !username ) {
       return res.json({
         status: "no_active_session",
@@ -317,39 +321,30 @@ router.post("/signup", async (req, res) => {
       [ name, username, country || null, age || null, email, mob, joiningDate, password, profession || null,    bio || null      ]
     );
 
-    // Check if session exists
-    const existingSession = await Session.findOne({ username });
-    if (existingSession) {
-      return res.json({
-        status: "already_logged_in",
-        message: "User already has an active session",
-      });
-    }
-
+  
     // Create new session
     const sessionId = uuidv4();
     req.session.username = username;
     req.session.sessionId = sessionId;
-    req.session.save((err) => {
+    req.session.save(async (err) => {
       if (err) {
         console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
         return res.json({ status: "server_error", message: err.message });
       }
-    });
 
-    await Session.create({
-      username,
-      sessionId,
-      createdAt: new Date(),
-    });
-
-    return res.json({
-      status: "signup_success",
-      message: "User registered and session created successfully",
-      data: {
+      await Session.create({
         username,
         sessionId,
-      },
+        createdAt: new Date(),
+      });
+      return res.json({
+        status: "signup_success",
+        message: "User registered and sessi on created successfully",
+        data: {
+          username,
+          sessionId,
+        },
+      });
     });
   } catch (err) {
     console.error("Signup error:", err);
@@ -359,7 +354,6 @@ router.post("/signup", async (req, res) => {
     });
   }
 });
-
 
 // Route to check whether current requesting session is authenticated or not 
 router.get("/auth" , async (req , res)=>{

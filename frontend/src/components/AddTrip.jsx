@@ -131,6 +131,7 @@ const AddTrip = () => {
           value={formData.cost}
           onChange={handleChange}
           min={0}
+          step={10}
           required
         />
 
