@@ -13,8 +13,9 @@ import tripRoutes from './Routes/tripRoutes.js';
 dotenv.config()
 const app = express();
 
-app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -29,26 +30,79 @@ app.use(cors({
 connectMongo();
 
 // app.set("trust proxy", 1); // for Production (render)  made it , so they accept secure:true(accepts https only) in cookies
-app.use(
-  session({
-    secret: process.env.MONGO_SECRET,             
-    resave: false,                       
-    saveUninitialized: false,            
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24,       // 1 day
-      httpOnly: true,
-      secure: false,  
-      sameSite:"lax", // for localhost only
+// app.use(
+//   session({
+//     secret: process.env.MONGO_SECRET,             
+//     resave: false,                       
+//     saveUninitialized: false,            
+//     cookie: {
+//       maxAge: 1000 * 60 * 60 * 24,       // 1 day
+//       httpOnly: true,
+//       secure: false,  
+//       sameSite:"lax", // for localhost only
 
-      // secure:true, // for production uncomment these two 
-      // sameSite:"none",                   // set true only in HTTPS (for Production)
-    },
-    store: MongoStore.create({// Required for persistently storing connect-mongo models 
-      mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
-      ttl: 24 * 60 * 60,                 // store sessions for 1 day
-    }),
-  })
+//       // secure:true, // for production uncomment these two 
+//       // sameSite:"none",                   // set true only in HTTPS (for Production)
+//     },
+//     store: MongoStore.create({// Required for persistently storing connect-mongo models 
+//       mongoUrl: process.env.MONGO_URI,   // Your MongoDB URL
+//       ttl: 24 * 60 * 60,                 // store sessions for 1 day
+//     }),
+//   })
+// );
+// app.use(
+//     session({
+//         secret: process.env.MONGO_SECRET,
+
+//         resave: false,
+
+//         saveUninitialized: false,
+
+//         cookie: {
+//             maxAge: 1000 * 60 * 60 * 24,
+//             httpOnly: true,
+//             secure: false,
+//             sameSite: "lax",
+//         },
+
+//         store: MongoStore.create({
+//             mongoUrl: process.env.MONGO_URI,
+//             collectionName: "sessions",
+//             ttl: 24 * 60 * 60,
+//             autoRemove: "native",
+//         }),
+//     })
+// );
+
+
+
+app.use(
+    session({
+        secret: process.env.MONGO_SECRET,
+
+        resave: false,
+
+        saveUninitialized: false,
+
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI,
+            collectionName: "sessions",
+            ttl: 24 * 60 * 60,
+            autoRemove: "native",
+        }),
+
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+        },
+    })
 );
+
+
+
+
 // Routes :
 app.use("/" , authRoutes);
 app.use("/", profileRoutes);
