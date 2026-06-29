@@ -151,7 +151,7 @@ router.post("/login", async (req, res) => {
     if (!password) {
       return res.json({
         status: "missing_password",
-        message: "Pass is required",
+        message: "Password is required",
       });
     }
 
@@ -185,62 +185,68 @@ router.post("/login", async (req, res) => {
       username: user.USERNAME,
     });
 
-    const createSession = () => {
-      // Pass an async function to the callback so we can use await inside
-      req.session.regenerate(async (err) => {
-        if (err) {
-          return res.json({
-            status: "Error in Login ",
-            message: "Error in Session Regeneration : " + err.message,
-          });
-        }
+    if (existingSession) {
+      const { sessionId: sessionIdCook, username: usernameCook } =
+        req.session || {};
 
-        // Attach basic details to the express-session object itself
-        req.session.username = user.USERNAME;
+      // stale session in DB but no cookie in browser
+      if (!sessionIdCook || !usernameCook) {
+        console.log(
+          "Stale Mongo session found but no frontend cookie. Removing it."
+        );
 
-        try {
-          // --- Updation is going here ---
-          
-          if (existingSession) {
-            // If they already have a session document, update it with the new sessionId
-            existingSession.sessionId = req.sessionID;
-            existingSession.createdAt = Date.now();
-            existingSession.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            
-            await existingSession.save();
-          } else {
-            // If they don't have a session document, create a new one
-            const newSession = new Session({
-              sessionId: req.sessionID,
-              username: user.USERNAME,
-            });
-            
-            await newSession.save();
+        const deleted = await Session.deleteOne({ username: user.USERNAME });
+          if (deleted.deletedCount === 0) {
+            return res.json({ status: "server_error", message: "Could not clear stale session" });
           }
 
-          // Return your standard success response format
-          return res.json({
-            status: "login_success",
-            message: "Logged in successfully",
-            data:{
-              sessionId: req.sessionID,
-              username: user.USERNAME
-            }
-          });
+      } else {
+        console.log(
+          `User already logged in from another session: ${user.USERNAME}`
+        );
 
-        } catch (dbError) {
-          console.error("MongoDB Session save error:", dbError);
-          return res.json({
-            status: "server_error",
-            message: "Internal server error during session creation",
-          });
-        }
+        return res.json({
+          status: "already_logged_in",
+          message: "User already logged in from another session",
+          data: { username: user.USERNAME },
+        });
+      }
+    }
+
+    // 5️⃣ Create new session
+    const sessionId = uuidv4();
+
+    req.session.username = user.USERNAME;
+    req.session.sessionId = sessionId;
+
+      // 6️⃣ Store session reference in MongoDB
+      await Session.create({
+        username: user.USERNAME,
+        sessionId,
+        createdAt: new Date(),
       });
-    };
 
-    // Execute the function to create the session and send the response
-    createSession();
+      console.log("Login Success");
 
+      return res.json({
+        status: "login_success",
+        message: "User logged in successfully",
+        data: {
+          username: user.USERNAME,
+          sessionId,
+        },
+      });
+      
+    // req.session.save(async (err) => {
+    //   if (err) {
+    //     console.error("Session Save Error:", err);
+    //     return res.json({
+    //       status: "server_error",
+    //       message: err.message,
+    //     });
+    //   }
+
+    // });
   } catch (err) {
     console.error("Login error:", err);
 
@@ -251,42 +257,27 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
 //    LOGOUT ROUTE
   
 router.post("/logout", async (req, res) => {
   try {
-    // 1️⃣ Check if an active session actually exists
-    // We only need to check if the username is attached to the session
-    if (!req.session || !req.session.username) {
+    const { username , sessionId } = req.session || {};
+    if (!sessionId || !username ) {
       return res.json({
         status: "no_active_session",
         message: "No active session found to logout",
       });
     }
-
-    // 2️⃣ Let express-session and connect-mongo handle the deletion
-    // This automatically deletes the document from your MongoDB database
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Session destruction error:", err);
-        return res.json({
-          status: "server_error",
-          message: "Internal server error during logout",
-        });
-      }
-
-      // 3️⃣ Clear the cookie from the user's browser
-      // NOTE: "connect.sid" is the default cookie name for express-session. 
-      // If you changed the 'name' property in your session config, use that name here instead.
-      res.clearCookie("connect.sid");
-
-      // 4️⃣ Return your exact standard success response
+  //   // Remove from MongoDB
+    await Session.deleteOne({ sessionId, username });
+    // Destroy express-session
+    req.session.destroy(() => {
       return res.json({
         status: "logout_success",
         message: "User logged out successfully",
       });
     });
-
   } catch (err) {
     console.error("Logout error:", err);
     return res.json({
@@ -333,28 +324,27 @@ router.post("/signup", async (req, res) => {
 
   
     // Create new session
-    req.session.regenerate((err) => {
+    const sessionId = uuidv4();
+    req.session.username = username;
+    req.session.sessionId = sessionId;
+    req.session.save(async (err) => {
       if (err) {
         console.error(" Session Save Error in req.session: ", err);  // Check what error comes here
         return res.json({ status: "server_error", message: err.message });
       }
 
-      req.session.username = username;
-
-      req.session.save((saveErr) => {
-        if (saveErr) {
-          console.error(" Session Save Error in req.session: ", saveErr);  // Check what error comes here
-          return res.json({ status: "server_error", message: saveErr.message });
-        }
-
-        return res.json({
-          status: "signup_success",
-          message: "User registered and sessi on created successfully",
-          data: {
-            username,
-            sessionId: req.sessionID,
-          },
-        });
+      await Session.create({
+        username,
+        sessionId,
+        createdAt: new Date(),
+      });
+      return res.json({
+        status: "signup_success",
+        message: "User registered and sessi on created successfully",
+        data: {
+          username,
+          sessionId,
+        },
       });
     });
   } catch (err) {
@@ -367,34 +357,66 @@ router.post("/signup", async (req, res) => {
 });
 
 // Route to check whether current requesting session is authenticated or not 
-// Route to check whether current requesting session is authenticated or not 
 router.get("/auth" , async (req , res)=>{
   // console.log("Auth Check Requested ");
-  
-  // We only pull username because connect-mongo handles the session ID mapping automatically
-  const { username } = req.session || {}; 
-  
+  const {sessionId , username} = req.session;
   // console.log("Request.session is : " , req.session);
-  
-  if (!username){
+  if (!sessionId || !username){
     console.log("Returning False From Here 1 where req.session is : ");
     console.log(req.session);
 
     return res.json({ authenticated: false });
   }
 
-  // NOTE: The manual Session.findOne() database check was completely removed here.
-  // Why? Because if code execution reaches this line, connect-mongo has ALREADY 
-  // queried MongoDB, found a valid unexpired session, and attached the username.
-  // Doing a second findOne() is a redundant database hit that slows down your app!
+  const existingSession = await Session.findOne({sessionId, username});
+  console.log(`Existing Session check in Auth Route with sessionId ${sessionId } and username : ${username} is : ` , existingSession);
   
-  // If we have the username, they are guaranteed to be authenticated by MongoDB.
+  if(existingSession){
+    return res.json({
+      authenticated:true, 
+      username:req.session.username
+    })
+  }
+  
   return res.json({
-    authenticated: true, 
-    username: username
-  });
+    authenticated:false
+  })
 
   // No need to check mysql as if profile doesn't exist and there is ongoing session (this can't happen ) ... the delete route on profile will automatically drop the ongoing session in mongodb (and profile in mysql) once the user sends a delete request 
 });
 
+
 export default router;
+
+
+
+
+
+// Middleware requireAuth : 
+/*
+      console.log("Middlewre response Here");
+      return res.json({
+        status: "not_logged_in",
+        message: "You must be logged in to access this resource",
+      });
+    }
+    // Step 2 — verify session with MongoDB 
+    const existingSession = await Session.findOne({ sessionId, username });
+
+    if (!existingSession) {
+      return res.json({
+        status: "not_logged_in",
+        message: "Session is invalid or expired",
+      });
+    }
+    // Step 3 — authenticated → allow request
+    next();
+  } catch (error) {
+    console.error("Authentication middleware error:", error);
+    return res.json({
+      status: "server_error",
+      message: "Error while checking session",
+    });
+  }
+}
+*/
