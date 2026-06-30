@@ -29,6 +29,9 @@ app.use(cors({
 // Data base Connection  
 connectMongo();
 
+//Changes for Ubuntu deployed version only : 
+app.set("trust proxy", 1);
+
 // app.set("trust proxy", 1); // for Production (render)  made it , so they accept secure:true(accepts https only) in cookies
 // app.use(
 //   session({
@@ -74,8 +77,9 @@ connectMongo();
 //     })
 // );
 
+const isProduction = process.env.NODE_ENV === "production";
 
-
+console.log("Environment : " , isProduction);
 app.use(
     session({
         secret: process.env.MONGO_SECRET,
@@ -94,8 +98,10 @@ app.use(
         cookie: {
             maxAge: 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            //secure: process.env.NODE_ENV === "production",
+            //sameSite: "lax",
+            secure: isProduction, 
+            sameSite: isProduction ? "none" : "lax",
         },
     })
 );

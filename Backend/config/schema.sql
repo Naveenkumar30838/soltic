@@ -1,5 +1,5 @@
 --  Contains the Database Schema for UserProfile , Trips and Trip Participants 
-CREATE DATABASE IF NOT EXISTS SOLTIC;
+CREATE DATABASE IF NOT EXISTS  SOLTIC;
 USE SOLTIC;
 
 CREATE TABLE  IF NOT EXISTS PROFILE (

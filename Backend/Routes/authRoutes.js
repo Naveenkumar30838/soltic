@@ -133,7 +133,6 @@ const router = express.Router();
 //     });
 //   }
 // });
-
 router.post("/login", async (req, res) => {
   console.log("Login Requested");
 
@@ -180,66 +179,42 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // 4️⃣ Check existing session in MongoDB
-    const existingSession = await Session.findOne({
-      username: user.USERNAME,
-    });
+    // 4️⃣ Let connect-mongo handle the session automatically
+    // Replaced the manual Mongoose queries to prevent database duplication.
+    req.session.regenerate((err) => {
+      console.log("Regerating Session in Login Route");
+      if (err) {
+        return res.json({
+          status: "Error in Login ",
+          message: "Error in Session Regeneration : " + err.message,
+        });
+      }
 
-    const createSession = () => {
-      // Pass an async function to the callback so we can use await inside
-      req.session.regenerate(async (err) => {
-        if (err) {
-          return res.json({
-            status: "Error in Login ",
-            message: "Error in Session Regeneration : " + err.message,
-          });
-        }
+      // Saving username directly inside express-session. 
+      // connect-mongo automatically saves this and maps it to req.sessionID in the DB.
+      req.session.username = user.USERNAME;
 
-        // Attach basic details to the express-session object itself
-        req.session.username = user.USERNAME;
-
-        try {
-          // --- Updation is going here ---
-          
-          if (existingSession) {
-            // If they already have a session document, update it with the new sessionId
-            existingSession.sessionId = req.sessionID;
-            existingSession.createdAt = Date.now();
-            existingSession.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            
-            await existingSession.save();
-          } else {
-            // If they don't have a session document, create a new one
-            const newSession = new Session({
-              sessionId: req.sessionID,
-              username: user.USERNAME,
-            });
-            
-            await newSession.save();
-          }
-
-          // Return your standard success response format
-          return res.json({
-            status: "login_success",
-            message: "Logged in successfully",
-            data:{
-              sessionId: req.sessionID,
-              username: user.USERNAME
-            }
-          });
-
-        } catch (dbError) {
-          console.error("MongoDB Session save error:", dbError);
+      // Force a manual save to guarantee MongoDB finishes writing before replying
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error("MongoDB Session save error:", saveErr);
           return res.json({
             status: "server_error",
             message: "Internal server error during session creation",
           });
         }
-      });
-    };
 
-    // Execute the function to create the session and send the response
-    createSession();
+        // Return your EXACT standard success response format
+        return res.json({
+          status: "login_success",
+          message: "Logged in successfully",
+          data: {
+            sessionId: req.sessionID, // This matches the _id of the connect-mongo document
+            username: user.USERNAME
+          }
+        });
+      });
+    });
 
   } catch (err) {
     console.error("Login error:", err);
@@ -250,7 +225,6 @@ router.post("/login", async (req, res) => {
     });
   }
 });
-
 //    LOGOUT ROUTE
   
 router.post("/logout", async (req, res) => {
