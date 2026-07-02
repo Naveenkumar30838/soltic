@@ -28,7 +28,7 @@ export async function mainWithHistory(message , history = []) {
     config:{
     systemInstruction: TRAVEL_AGENT_SYSTEM_PROMPT,
     temperature: 0.6,
-    maxOutputTokens: 512,
+    maxOutputTokens: 2048,
     }
    
   });

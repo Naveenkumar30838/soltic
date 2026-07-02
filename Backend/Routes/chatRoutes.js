@@ -1,7 +1,9 @@
 import express  from "express";
 import Chats from "../Model/chatModel.js";
 import requireAuth from "../Middleware/requireAuth.js";
-import {mainWithHistory} from '../apis.js'
+// import {mainWithHistory} from '../apis.js'
+import { mainWithHistory } from '../openRouter.js';
+
 const router = express.Router();
 
 router.get("/chats/:username",requireAuth ,  async(req, res) => {

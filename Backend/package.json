@@ -20,6 +20,7 @@
     "mongoose": "^8.19.3",
     "mysql2": "^3.18.2",
     "node-fetch": "^3.3.2",
+    "openai": "^6.45.0",
     "sarvamai": "^1.1.7",
     "uuidv4": "^6.2.13"
   }
