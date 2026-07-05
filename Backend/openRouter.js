@@ -64,8 +64,6 @@ export async function mainWithHistory(message, history = []) {
   ];
 
   // 2. Format the history. 
-  // NOTE: OpenRouter uses "assistant" instead of Gemini's "model", 
-  // and "content" instead of Gemini's "parts: [{text}]"
   history.forEach(item => {
     messages.push({ role: "user", content: item.message });
     messages.push({ role: "assistant", content: item.response }); 
@@ -87,7 +85,7 @@ export async function mainWithHistory(message, history = []) {
       model: selectedModel,
       messages: messages,
       temperature: 0.6,
-      max_tokens: 2048, // NOTE: Gemini's maxOutputTokens is just max_tokens here
+      max_tokens: 2048, 
     });
     
     console.log(` Currently Using Model: ${response.model}`);
