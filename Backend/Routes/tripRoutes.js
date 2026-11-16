@@ -6,8 +6,8 @@ import TripPlan from "../Model/tripPlan.js";
 const router = express.Router();
 
 router.post("/trips", requireAuth, async (req, res) => {
- 
   // Adds a new Trip in the Trips database 
+  
   try {
     const username = req.session.username;
 
@@ -57,6 +57,7 @@ router.post("/trips", requireAuth, async (req, res) => {
 });
 
 router.delete("/trips/:id", requireAuth, async (req, res) => {
+  //Delete a Trip of Specific Id, Upgrade 
   try {
     const username = req.session.username;
     const tripId = req.params.id;

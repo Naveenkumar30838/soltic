@@ -49,7 +49,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { TRAVEL_AGENT_SYSTEM_PROMPT } from './config/geminiConfig.js';
-import OpenAI from 'openai'; // Import the OpenAI SDK instead of GoogleGenAI
+import OpenAI from 'openai'; // Import the OpenAI SDK 
 
 // Initialize the OpenAI client pointing to OpenRouter's URL
 const openai = new OpenAI({

@@ -9,13 +9,13 @@ import authRoutes from './Routes/authRoutes.js';
 import chatRoutes from './Routes/chatRoutes.js';
 import profileRoutes from './Routes/profileRoutes.js';
 import tripRoutes from './Routes/tripRoutes.js';
+import uploadRouter from "./Routes/uploadRoutes.js";
 
 dotenv.config()
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -114,7 +114,7 @@ app.use("/" , authRoutes);
 app.use("/", profileRoutes);
 app.use("/" , chatRoutes);
 app.use("/" , tripRoutes);
-
+app.use("/", uploadRouter);
 
 app.get('/', (req, res) => {
   res.json({status : "Api is running "});

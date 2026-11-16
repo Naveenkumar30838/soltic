@@ -165,7 +165,9 @@ return ( <div className="home">
 
     </div>
   </section>
-
+  <section> 
+    
+  </section>
   <section className="workflow">
     <h2>How It Works</h2>
 
