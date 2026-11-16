@@ -1,3 +1,4 @@
 Agent/
 claude_agent/
 **/.env
+LangGraphAgent/.env
